@@ -1,0 +1,54 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  (HTTP 200) plus registry searches of npm, PyPI, Maven Central, NuGet,
+  pkg.go.dev, RubyGems, Packagist and crates.io on 2026-07-27.
+description: >-
+  PG&E ships two first-party Share My Data client SDKs — Python and JavaScript —
+  each with its own development guide, but distributes them as ZIP downloads
+  from pge.com rather than through any public package registry. No first-party
+  PG&E package exists on npm, PyPI, Maven Central, NuGet, pkg.go.dev, RubyGems,
+  Packagist or crates.io, and PG&E's GitHub organisation (github.com/pgetech)
+  has zero public repositories (confirmed 0 repos via the GitHub API,
+  2026-07-27). The PyPI project named "pge" is unrelated (Maxim Ryzhov, graph
+  modeling / EI estimation).
+packages:
+  - language: python
+    registry: vendor-download
+    name: Share My Data Python SDK
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/pythonsdk.zip
+    install: Download and unzip pythonsdk.zip from pge.com — not published to PyPI.
+    docs: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-python-development-guide.pdf
+    official: true
+    http_status: 200
+    verified: '2026-07-27'
+  - language: javascript
+    registry: vendor-download
+    name: Share My Data JavaScript SDK
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/javascriptsdk.zip
+    install: Download and unzip javascriptsdk.zip from pge.com — not published to npm.
+    docs: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-javascript-development-guide.pdf
+    official: true
+    http_status: 200
+    verified: '2026-07-27'
+registry_probes:
+  - {registry: npm, query: 'green button espi / sharemydata pge', result: 'no first-party PG&E package'}
+  - {registry: pypi, query: 'greenbutton, green-button, espi, sharemydata', result: '404 — not published'}
+  - {registry: pypi, query: pge, result: '200 but unrelated third-party project (graph modeling)'}
+  - {registry: github, query: 'github.com/pgetech', result: 'organisation exists, 0 public repositories'}
+tooling:
+  - name: SoapUI walkthrough
+    kind: reference-tooling
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
+    official: true
+    note: >-
+      PG&E's published step-by-step for retrieving a client access token over
+      mutual TLS with SoapUI. Not a package, but the only interactive client
+      PG&E documents.
+cli: none published
+notes: >-
+  Registry absence is recorded as data, not as a gap to be filled with
+  third-party libraries. Community Green Button/ESPI libraries exist (e.g. from
+  the Green Button Alliance) but are not first-party to PG&E and are not listed
+  here as PG&E SDKs.

@@ -1,0 +1,80 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  (HTTP 200, fetched 2026-07-27), PG&E Supported-APIs.pdf, and live probes of
+  api.pge.com. Deprecated-operation derivation checked against
+  openapi/green-button-alliance-espi-openapi.json (no operation carries
+  deprecated: true).
+description: >-
+  Share My Data's lifecycle posture is release-note driven. PG&E versions the
+  resource surface in the URI path (espi/1_1) and has kept that version stable
+  since launch, shipping change as named, dated platform releases. It publishes
+  no formal deprecation policy, no Sunset/Deprecation header support, no SLA and
+  no public API status page — but it does ship an in-API service status resource
+  and it has announced at least one breaking cutover with a named cut-off date.
+versioning:
+  scheme: uri-path
+  current: espi/1_1
+  oauth_path_version: v2
+  stability: >-
+    The path version has not changed since launch; functional change is
+    delivered as named releases (1.1, 2.0, EDS, 3.0, 4.0, Meter ID Phase 1/2).
+  docs: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  detail: changelog/pge-changelog.yml
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  practice: >-
+    No written deprecation policy. In practice PG&E announces breaking change in
+    the release notes with a named cut-off date — the Click-Through Phase 2 OAuth
+    change (Release 2.0, 28 June 2018) was explicitly "NOT backwards compatible"
+    and the previous authorization process stopped working on 29 June 2018.
+    Existing authorizations were preserved.
+  schema_generations: >-
+    Two XSD generations are published side by side rather than retired: the
+    current set (espiDerived.20180821 / retailcustomer.20180802) and the
+    Click-Thru 2.0 set (espiDerived.20180315 / retailcustomer.20180315). PG&E
+    stated in 2015 that the XSDs are backwards compatible.
+  change_notice_commitment: >-
+    On rate limits: "we will be certain to communicate any such change in
+    advance of implementation."
+sla:
+  url: null
+  uptime_target: not published
+  note: >-
+    No developer-facing SLA. Share My Data is a CPUC-tariffed service (Electric
+    Sample Form 79-1186, Advice 6900-E, effective 2023-04-01); obligations sit in
+    the tariff and the CPUC rules rather than in an API service-level agreement.
+status_page: null
+status_page_published: false
+service_status:
+  in_api_resource: https://api.pge.com/GreenButtonConnect/espi/1_1/resource/ReadServiceStatus
+  token: client_access_token
+  response: ServiceStatus document with a currentStatus element (expected value 1)
+  note: >-
+    PG&E's only status signal is this authenticated in-API resource. There is no
+    public status.pge.com or equivalent for the API; www.pge.com outage pages
+    cover the electric and gas network, not the API platform.
+registration_lifecycle:
+  test_window_days: 90
+  note: >-
+    A third-party registration expires if the required connectivity, OAuth and
+    ApplicationInformation tests are not completed within 90 days.
+  certificate_renewal: >-
+    Third parties update their SSL certificate in the portal under Manage
+    Registration when it nears expiry (Release 1.1, 21 August 2015).
+authorization_lifecycle:
+  authorization_code_ttl_seconds: 600
+  access_token_ttl_seconds: 3600
+  refresh_token_ttl: 1 year
+  customer_revocation: Customer may cancel an authorization from the PG&E dashboard.
+  third_party_revocation: HTTP DELETE on .../espi/1_1/resource/Authorization/{AuthorizationID}
+  authorization_period: Customer selects a defined period or Indefinite.
+deprecated_operations: []
+deprecated_operations_note: >-
+  No operation in openapi/green-button-alliance-espi-openapi.json is marked
+  deprecated, and PG&E's Supported-APIs reference marks none of its resources as
+  deprecated.

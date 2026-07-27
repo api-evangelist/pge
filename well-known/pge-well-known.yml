@@ -1,0 +1,45 @@
+generated: '2026-07-27'
+method: searched
+source: Live anonymous HTTP probes, 2026-07-27
+description: >-
+  PG&E serves no /.well-known/ discovery surface on any of its three relevant
+  hosts. Every RFC 9116 security.txt, OIDC discovery, RFC 8414 OAuth
+  authorization-server metadata, RFC 9727 api-catalog and ai-plugin.json probe
+  returned HTTP 404. This is recorded as a real, verified absence — PG&E's
+  developer contract is published as HTML and PDF on www.pge.com instead. The
+  vulnerability disclosure policy exists but is not advertised through
+  security.txt (see security/pge-vulnerability-disclosure.yml).
+hosts:
+  - https://www.pge.com
+  - https://api.pge.com
+  - https://sharemydata.pge.com
+documents:
+  - {host: 'https://www.pge.com', path: /.well-known/security.txt, status: 404}
+  - {host: 'https://www.pge.com', path: /.well-known/openid-configuration, status: 404}
+  - {host: 'https://www.pge.com', path: /.well-known/oauth-authorization-server, status: 404}
+  - {host: 'https://www.pge.com', path: /.well-known/oauth-protected-resource, status: 404}
+  - {host: 'https://www.pge.com', path: /.well-known/api-catalog, status: 404}
+  - {host: 'https://www.pge.com', path: /.well-known/ai-plugin.json, status: 404}
+  - {host: 'https://www.pge.com', path: /llms.txt, status: 404}
+  - {host: 'https://www.pge.com', path: /robots.txt, status: 200, note: 'Served, but not an API discovery document; not saved.'}
+  - {host: 'https://api.pge.com', path: /.well-known/security.txt, status: 404}
+  - {host: 'https://api.pge.com', path: /.well-known/openid-configuration, status: 404}
+  - {host: 'https://api.pge.com', path: /.well-known/oauth-authorization-server, status: 404}
+  - {host: 'https://api.pge.com', path: /.well-known/oauth-protected-resource, status: 404}
+  - {host: 'https://api.pge.com', path: /.well-known/api-catalog, status: 404}
+  - {host: 'https://api.pge.com', path: /.well-known/ai-plugin.json, status: 404}
+  - {host: 'https://api.pge.com', path: /llms.txt, status: 404}
+  - {host: 'https://api.pge.com', path: /robots.txt, status: 404}
+  - {host: 'https://sharemydata.pge.com', path: /.well-known/security.txt, status: 404}
+  - {host: 'https://sharemydata.pge.com', path: /.well-known/openid-configuration, status: 404}
+  - {host: 'https://sharemydata.pge.com', path: /.well-known/oauth-authorization-server, status: 404}
+  - {host: 'https://sharemydata.pge.com', path: /.well-known/oauth-protected-resource, status: 404}
+  - {host: 'https://sharemydata.pge.com', path: /.well-known/api-catalog, status: 404}
+  - {host: 'https://sharemydata.pge.com', path: /.well-known/ai-plugin.json, status: 404}
+  - {host: 'https://sharemydata.pge.com', path: /llms.txt, status: 404}
+  - {host: 'https://sharemydata.pge.com', path: /robots.txt, status: 200, note: 'Served, but not an API discovery document; not saved.'}
+saved_files: []
+finding: >-
+  Zero discovery documents. No apis.yml pointer of type WellKnown or SecurityTxt
+  is emitted for this repo, because nothing is present to point at — this file
+  is the negative record, not a catalog.

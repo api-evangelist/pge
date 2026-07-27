@@ -1,0 +1,126 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  Release notes section of
+  https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  (HTTP 200, fetched and text-extracted 2026-07-27).
+docs: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+description: >-
+  PG&E publishes dated Share My Data release notes on its third-party developer
+  page, spanning 2015 to 2024. There is no separate changelog feed, no RSS and
+  no version endpoint — the notes are inline HTML on the developer page. Entries
+  are named releases rather than semantic API versions; the API path version has
+  remained espi/1_1 throughout.
+versioning:
+  scheme: named platform releases over a fixed URI path version
+  path_version: espi/1_1
+  current_release: Share My Data Clickthrough Enhancement — Meter ID Phase 2 (20 June 2024)
+  detail: lifecycle/pge-lifecycle.yml
+contact: ShareMyData@pge.com
+entries:
+  - release: Share My Data Clickthrough Enhancement — Meter ID Phase 2
+    date: '2024-06-20'
+    latest: true
+    breaking: false
+    highlights:
+      - >-
+        Phase 2 of the Meter ID enhancement, allowing identification of the
+        individual Meter ID associated with electric interval meter data — aimed
+        at service agreements with multiple meters.
+      - >-
+        Vendors using any API call with MeterReadingID are advised to re-call
+        .../espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/MeterReading
+        to obtain the newly encoded MeterReadingID.
+    context: >-
+      Phase 1 (March 2023) added a <utcNumber/> value to the impacted APIs.
+  - release: Release 4.0 — Share My Data Clickthrough
+    date: '2023-03-20'
+    breaking: false
+    highlights:
+      - New HTTP 204 response code on both synchronous and asynchronous calls to
+        indicate no data available for the requested range.
+      - x-transaction header label linking PG&E's response to a specific
+        asynchronous call, returned with a Correlation ID when the file is ready.
+      - Greater granularity on UsagePoint/MeterReadingID — electric interval data
+        for multiple meters on a single service agreement.
+      - Additional clarity on Reading Quality Indicator values for ESTIMATED
+        interval data, including value 19 (revenue quality), noted as an
+        extension beyond the original ESPI standard.
+  - release: Release 3.0 — Share My Data Clickthrough
+    date: '2018-11-15'
+    breaking: false
+    highlights:
+      - Customer Class Indicator added — each authorized SAID identified as RES,
+        AGR, COM/IND or Other.
+      - Billing and Usage APIs accept updated-max / updated-min query parameters
+        as an alternative to published-min / published-max, returning all changes
+        in the window.
+      - The third party's 5-digit Bulk ID replaced by the third party's Client ID
+        in the online authorization flow.
+      - Vendor API usage metrics released in the Share My Data third-party portal.
+  - release: Release EDS — Share My Data Clickthrough (Expanded Data Set)
+    date: '2018-09-27'
+    breaking: false
+    highlights:
+      - New data elements added to the Rule 24 data set under PG&E's Expanded
+        Data Set project, with corresponding new elements in the Rule 25 data set.
+      - Account, service and program-enrollment elements extended (including
+        Outage Block).
+  - release: Release 2.0 — Share My Data Clickthrough (Click-Through Phase 2)
+    date: '2018-06-28'
+    breaking: true
+    cutoff_date: '2018-06-29'
+    highlights:
+      - >-
+        Conformance to the OAuth 2.0 protocol — PG&E eliminated its initial
+        series of redirects and combined the customer login redirect with the
+        authorization-code request against a new
+        authorizationServerAuthorizationEndpoint URI.
+      - >-
+        Explicitly NOT backwards compatible. Third parties were REQUIRED to
+        change their OAuth implementation concurrently; the previous customer
+        authorization process stopped working on the stated cut-off date of
+        29 June 2018. Existing authorizations were unaffected.
+      - Electric Interval Time-of-Use indicators and power-of-ten multipliers
+        added to interval usage, billed demand and billed total usage.
+  - release: Release 2.0 — Standard User
+    date: '2015-12-20'
+    breaking: true
+    highlights:
+      - dataCustodianID (dataCustodianID=PGE) passed back in the redirect to
+        thirdPartyScopeSelectionScreenURI during the OAuth sequence, for third
+        parties integrated with multiple GBCMD utilities.
+      - Date parameters on requests that accept them (e.g. batch) must use Zulu
+        format; other date formats are not supported.
+    documents:
+      - SUPPORTED_APIS.SMD_CLICK-THRU_1.0 (PDF)
+      - SUPPORTED_DATA_ELEMENTS_RETAILCUSTOMER.SMD_CLICK_THRU_1.0 (PDF)
+      - PGE_ESPI_DATA_MODEL.SMD_CLICK-THRU_1.0 (PDF)
+      - SUPPORTED_DATA_ELEMENTS_ESPIDERIVED.SMD_CLICK_THRU_1.0 (PDF)
+      - ESPI_XSDS (ZIP)
+  - release: Release 2.0 — Self Access
+    date: '2015-12-18'
+    breaking: true
+    highlights:
+      - Zulu-only date parameters for APIs that accept dates.
+      - Interval Time-of-Use indicators included with interval data.
+      - XSDs stated to be backwards compatible (espiDerived.xsd for interval
+        usage and billing info, retailcustomer.xsd for customer info).
+  - release: Release 2.0 — Community Choice Aggregator (CCA)
+    date: '2015-12-18'
+    breaking: false
+    highlights:
+      - CCA-specific 2.0 updates published alongside the Standard User and Self
+        Access notes.
+  - release: Release 1.1
+    date: '2015-08-21'
+    breaking: false
+    highlights:
+      - Optional state parameter on the authorization-code request, echoed back
+        by PG&E with the authorization code.
+      - Resource URI changes in OAuth responses.
+      - SSL certificate self-service update in the third-party portal under
+        Manage Registration (for certificates nearing expiry).
+window: >-
+  Complete set of dated release notes published on the developer page as of
+  2026-07-27. The live page is the source of truth.

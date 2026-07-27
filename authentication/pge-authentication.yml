@@ -1,0 +1,139 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  (HTTP 200, fetched 2026-07-27) and
+  https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/OAuth_Authorization_ESPI.pdf
+  (HTTP 200). Upgraded from the derived pass over
+  openapi/green-button-alliance-espi-openapi.json, whose declared server is the
+  Green Button Alliance sandbox and NOT a PG&E host.
+docs: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+description: >-
+  PG&E Share My Data authenticates third parties with OAuth 2.0 (NAESB ESPI
+  authorization profile) layered on MANDATORY mutual TLS 1.2. This is not
+  OpenID Connect: /.well-known/openid-configuration returns HTTP 404 on
+  www.pge.com, api.pge.com and sharemydata.pge.com (re-probed 2026-07-27). Two
+  bearer-token classes are issued from separate grants, and a third
+  registration token governs the ApplicationInformation resource.
+summary:
+  types: [oauth2, mutualTLS, http]
+  oauth2_flows: [authorizationCode, clientCredentials, refreshToken]
+  api_key_in: []
+  openid_connect: false
+  mutual_tls_required: true
+schemes:
+  - name: MutualTLS
+    type: mutualTLS
+    required: true
+    tls_version: TLS 1.2
+    certificate: >-
+      Third party must present an unexpired, unrevoked SHA-2 X.509 client
+      certificate with an RSA public key of at least 2048 bits, issued by a
+      recognized public certificate authority. PG&E names AddTrust, Comodo,
+      DigiCert, Entrust, GlobalSign, Go Daddy, USERTrust and VeriSign.
+      Self-signed certificates are explicitly not accepted.
+    applies_to: >-
+      Every request between the third party and PG&E except the browser
+      redirects in the OAuth authorization-code flow, including the token
+      endpoint call.
+    verified: >-
+      Anonymous GET of every ESPI resource path returns HTTP 400 "Invalid
+      Certificate" from Mulesoft-API-Gateway, while invented sibling paths
+      return HTTP 404 "No listener for endpoint" (2026-07-27).
+    source: docs
+  - name: OAuth2ClientCredentials
+    type: oauth2
+    flow: clientCredentials
+    token_endpoint: https://api.pge.com/datacustodian/oauth/v2/token
+    test_token_endpoint: https://api.pge.com/datacustodian/test/oauth/v2/token
+    client_authentication: >-
+      HTTP Basic — Authorization: Basic base64(client_ID:client_Secret) — with
+      grant_type=client_credentials.
+    issues: client_access_token
+    token_type: Bearer
+    token_lifetime_seconds: 3600
+    refresh_token_lifetime: 1 year
+    response_format: >-
+      XML Response document with client_access_token, expires_in, scope and
+      token_type elements (PG&E's published connectivity-test example).
+    used_for: >-
+      Third-party-level resources — DownloadSampleData, ReadServiceStatus, the
+      Authorization feed and detail, and the Bulk-level Batch resources.
+    source: docs
+  - name: OAuth2AuthorizationCode
+    type: oauth2
+    flow: authorizationCode
+    authorization_endpoint_production: https://sharemydata.pge.com/myAuthorization
+    authorization_endpoint_test: https://api.pge.com/datacustodian/test/oauth/v2/authorize
+    token_endpoint: https://api.pge.com/datacustodian/oauth/v2/token
+    test_token_endpoint: https://api.pge.com/datacustodian/test/oauth/v2/token
+    client_authentication: >-
+      HTTP Basic — Authorization: Basic base64(client_ID:client_Secret) — with
+      grant_type=authorization_code, code and redirect_uri.
+    authorization_code_lifetime_seconds: 600
+    issues: access_token + refresh_token
+    token_type: bearer
+    token_lifetime_seconds: 3600
+    refresh_token_lifetime: 1 year
+    state_parameter: supported (optional, echoed back)
+    scope_model: >-
+      ESPI function-block scope string rather than named OAuth scopes — see
+      scopes/pge-scopes.yml.
+    used_for: >-
+      Per-customer resources — LocalTimeParameters, ReadingType, the
+      Subscription/UsagePoint/MeterReading/IntervalBlock/UsageSummary trees and
+      the customer-level Batch resources.
+    customer_journey: >-
+      The PG&E customer authenticates on PG&E's own site (or the Guest Access
+      tab) and selects data groups, interval duration and authorization period
+      (defined period or Indefinite). A customer may cancel; a third party may
+      revoke with HTTP DELETE on the Authorization resource.
+    source: docs
+  - name: RegistrationAccessToken
+    type: http
+    scheme: bearer
+    token: registration_access_token
+    issued_at: registration, via the Share My Data third-party portal
+    used_for: >-
+      The ApplicationInformation resource, which returns the third party's own
+      registered application record.
+    source: docs
+  - name: oauth2
+    type: oauth2
+    first_party: false
+    note: >-
+      Retained from the derived pass over the Green Button Alliance OpenAPI. Its
+      URLs are the GBA sandbox (https://sandbox.greenbuttonalliance.org:8443),
+      NOT PG&E hosts. Kept only to document the standard contract.
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://sandbox.greenbuttonalliance.org:8443/oauth/authorize
+        tokenUrl: https://sandbox.greenbuttonalliance.org:8443/oauth/token
+        scopes: 0
+      - flow: clientCredentials
+        tokenUrl: https://sandbox.greenbuttonalliance.org:8443/oauth/token
+        scopes: 0
+    sources:
+      - openapi/green-button-alliance-espi-openapi.json
+openid_connect:
+  served: false
+  probed: '2026-07-27'
+  probes:
+    - {url: 'https://www.pge.com/.well-known/openid-configuration', status: 404}
+    - {url: 'https://api.pge.com/.well-known/openid-configuration', status: 404}
+    - {url: 'https://sharemydata.pge.com/.well-known/openid-configuration', status: 404}
+oauth_metadata:
+  rfc8414_served: false
+  probed: '2026-07-27'
+  probes:
+    - {url: 'https://api.pge.com/.well-known/oauth-authorization-server', status: 404}
+    - {url: 'https://www.pge.com/.well-known/oauth-authorization-server', status: 404}
+access_gate: >-
+  Credentials are not self-serve. A client_id/client_secret pair is issued only
+  after registration at https://sharemydata.pge.com/ with a US EIN, CPUC
+  eligibility screening, tariff acceptance and completion of the mandatory
+  connectivity and OAuth tests within 90 days.
+related:
+  - scopes/pge-scopes.yml
+  - conventions/pge-conventions.yml
+  - sandbox/pge-sandbox.yml

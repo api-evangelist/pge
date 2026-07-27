@@ -1,0 +1,93 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  (HTTP 200, fetched 2026-07-27) and PG&E Supported-APIs.pdf.
+spec_type: none
+spec_type_note: >-
+  PG&E publishes NO AsyncAPI document for this callback surface, and no
+  AsyncAPI, EventBridge schema or webhook JSON schema was found on any PG&E
+  host. This artifact is the captured webhook/event catalog, derived from PG&E's
+  own published description of the notification model — it is NOT a fabricated
+  AsyncAPI.
+description: >-
+  Share My Data has a real push surface. Every third party registers a
+  Notification URI, and PG&E POSTs to it when an authorization changes, when an
+  asynchronous (Batch) request has been prepared, and — for third parties that
+  opt in to daily subscription — when each day's data is packaged. The
+  notification does not carry the data: it carries retrieval URIs that the third
+  party then GETs over mutual TLS with the appropriate token. This is ESPI
+  function block FB=39 (Push model — Post Notification of data being ready
+  followed by GET).
+surface:
+  kind: webhook
+  direction: PG&E to third party
+  endpoint: >-
+    The third party's own Notification URI, supplied during registration at
+    https://sharemydata.pge.com/ and editable under Manage Registration.
+  transport: HTTPS POST over mutual TLS
+  payload_format: >-
+    ESPI XML in the http://naesb.org/espi namespace. PG&E's documented batch
+    notification body carries an ns0:BatchList element containing an
+    ns0:resources element with the retrieval URL(s).
+  retrieval_pattern: >-
+    Notification carries URIs only. The third party calls back with GET on the
+    supplied resource URL, using the client_access_token for Bulk-level
+    resources or the customer access_token for Subscription-level resources.
+  function_block: FB=39
+  correlation: >-
+    Asynchronous requests accept a correlationID query parameter; since Release
+    4.0 (2023-03-20) PG&E also supports an x-transaction header label returned
+    with a Correlation ID when the requested file is ready.
+events:
+  - name: authorization-changed
+    trigger: >-
+      Any change to an existing authorization, for example a customer
+      cancellation.
+    payload: Notification of the change, with the Authorization resource URI to retrieve.
+    retrieve_with: GET /GreenButtonConnect/espi/1_1/resource/Authorization/{AuthorizationID}
+    token: client_access_token
+    source_doc: PG&E third-party developer page, Notification URI section.
+  - name: async-batch-ready
+    trigger: >-
+      An earlier ad hoc asynchronous (Batch) request has been prepared and the
+      data is ready.
+    payload: ns0:BatchList with ns0:resources containing the retrieval URL(s).
+    retrieve_with: >-
+      GET on the supplied Batch resource URL — one of Batch/Bulk/{BulkID},
+      Batch/Subscription/{SubscriptionID},
+      Batch/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID},
+      Batch/BulkRetailCustomerInfo/{BulkID}, Batch/RetailCustomer/{RetailCustomerID},
+      Batch/BulkRetailDRPrgInfo/{BulkID}, Batch/RetailDRPrgInfo/{RetailCustomerID}.
+    token: client_access_token (Bulk level) or customer access_token (customer level)
+    documented_scenario: >-
+      Scenario 2 in PG&E's "DATA ACCESS: AD HOC REQUEST (ASYNCHRONOUS)" diagram.
+  - name: daily-subscription-data-ready
+    trigger: >-
+      Opt-in only. Third parties who tick "Notify me as data is ready" in their
+      registration profile receive a daily notification once PG&E has packaged
+      the latest day's data plus any corrections to previous data from the last
+      24 hours.
+    payload: Notification with the prepackaged data retrieval URI(s).
+    retrieve_with: GET on the supplied resource URL.
+    documented_scenario: >-
+      Scenario 1 in PG&E's "DATA ACCESS: DAILY SUBSCRIPTION" diagram.
+    guidance: >-
+      PG&E asks third parties who do not intend to retrieve data daily NOT to
+      enable this option, to reduce unnecessary processing. Ad hoc requests
+      remain available.
+registration:
+  notification_uri: Required at registration.
+  redirect_uri: Required for the OAuth authorization-code flow.
+  third_party_portal_uri: Required — PG&E redirects the customer here during authorization.
+  qa_scope_selection_host: >-
+    sharemydataqa.pge.com is named in PG&E release notes as the QA
+    dataCustodianScopeSelectionScreenURI host but does not resolve publicly.
+security:
+  transport: Mutual TLS 1.2 with the third party's CA-issued X.509 certificate.
+  signature: No webhook signature scheme (HMAC or otherwise) is documented.
+  replay_protection: Not documented.
+gaps:
+  - No AsyncAPI, no published JSON/XML schema specific to the notification body
+    beyond the ESPI namespace, no signature verification guidance, no retry or
+    delivery-guarantee policy, and no notification test harness.

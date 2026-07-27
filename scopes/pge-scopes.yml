@@ -1,0 +1,191 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf
+  (HTTP 200, fetched and text-extracted 2026-07-27), corroborated against the
+  authorization examples printed on
+  https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  (HTTP 200). Supersedes the derived pass over
+  openapi/green-button-alliance-espi-openapi.json, which declares zero scopes.
+docs: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf
+description: >-
+  PG&E Share My Data does not use named OAuth scope strings. Authorized scope is
+  expressed as an ESPI (NAESB REQ.21) function-block scope string returned on
+  the authorization-code response, the access-token response and the
+  Authorization API, combining a numeric FB= list with a utility-defined
+  AdditionalScope list and authorization parameters. Reproduced here from PG&E's
+  published mapping.
+scope_string:
+  parameter: scope
+  format: >-
+    FB=<underscore-delimited function block numbers>;AdditionalScope=<underscore-delimited
+    selections>;IntervalDuration=<seconds>;BlockDuration=<period>;HistoryLength=<months>;AccountCollection=<count>;BR=<ThirdPartyID>;dataCustodianId=PGE
+  published_example: >-
+    scope=FB=1_3_8_13_14_18_19_31_32_35_37_38_39_40_4_5_10_15_16_46_47;AdditionalScope=Usage_Billing_Basic_Account_ProgramEnrollment;IntervalDuration=900_3600;BlockDuration=Daily;HistoryLength={3P
+    Registered historical length};AccountCollection={count of
+    authorizedSAs};BR={ThirdPartyID};dataCustodianId=PGE
+  returned_on:
+    - Authorization Code Request response (redirect to redirect_uri)
+    - Access Token Request response
+    - Authorization API resource
+  always_returned_function_blocks: [1, 3, 8, 13, 14, 18, 19, 31, 32, 35, 37, 38, 39]
+schemes:
+  - name: OAuth2AuthorizationCode
+    source: docs
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://sharemydata.pge.com/myAuthorization
+        tokenUrl: https://api.pge.com/datacustodian/oauth/v2/token
+      - flow: clientCredentials
+        tokenUrl: https://api.pge.com/datacustodian/oauth/v2/token
+  - name: oauth2
+    source: openapi/green-button-alliance-espi-openapi.json
+    first_party: false
+    note: Green Button Alliance sandbox scheme, not a PG&E endpoint.
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://sandbox.greenbuttonalliance.org:8443/oauth/authorize
+        tokenUrl: https://sandbox.greenbuttonalliance.org:8443/oauth/token
+      - flow: clientCredentials
+        tokenUrl: https://sandbox.greenbuttonalliance.org:8443/oauth/token
+scopes:
+  - scope: FB=1
+    name: Common
+    description: Common services.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=3
+    name: Green Button Connect My Data
+    description: Core services.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=4
+    name: Interval Metering
+    description: Interval usage data.
+    customer_selectable: true
+    granted_when: Usage Info authorized for an electric or gas service agreement.
+  - scope: FB=5
+    name: Interval Electricity Metering
+    description: Interval usage data for electric service agreements.
+    customer_selectable: true
+    granted_when: Usage authorized for an electric service agreement.
+  - scope: FB=8
+    name: Forward and Reverse Metering
+    description: Delivered/Consumption and Received/Generation.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=10
+    name: Gas data
+    description: Gas data.
+    customer_selectable: true
+    granted_when: Usage or Billing Info authorized for a gas service agreement.
+  - scope: FB=13
+    name: Security and Privacy classes
+    description: HTTPS support.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=14
+    name: Authorization and Authentication (OAuth)
+    description: OAuth 2.0.
+    customer_selectable: true
+    always_returned: true
+  - scope: FB=15
+    name: Usage Summary
+    description: Usage summary information (billed total usage).
+    customer_selectable: true
+    granted_when: Usage or Billing Info authorized.
+  - scope: FB=16
+    name: Usage Summary with Cost
+    description: Usage summary with dollar bill cost.
+    customer_selectable: true
+    granted_when: Billing Info authorized.
+  - scope: FB=18
+    name: Multiple UsagePoints
+    description: Ability to authorize multiple service agreements.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=19
+    name: Partial update data
+    description: IntervalBlocks without full data sets (without UsagePoints, MeterReading).
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=31
+    name: Core REST Services
+    description: Third-party access to Subscription/Authorization.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=32
+    name: Resource Level REST
+    description: >-
+      Third-party access to UsagePoints, MeterReading and collections (excludes
+      ElectricPowerQualitySummary).
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=35
+    name: REST for Bulk
+    description: Support REST request for Bulk.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=37
+    name: Query Parameters
+    description: published-max, published-min.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=38
+    name: On Demand Requests
+    description: Request without prior notification.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=39
+    name: Push model
+    description: Post Notification (of data being ready) followed by GET.
+    customer_selectable: false
+    always_returned: true
+  - scope: FB=40
+    name: Offline Authorization to complement OAuth
+    description: Authorization performed offline (manual paper CISR or Ops Portal).
+    customer_selectable: false
+    granted_when: Offline authorization created via the paper CISR form.
+  - scope: FB=46
+    name: Core RetailCustomer
+    description: Retrieve resources for a RetailCustomer.
+    customer_selectable: true
+    granted_when: Basic and/or Account Info and/or ProgramEnrollment Info authorized.
+  - scope: FB=47
+    name: REST for RetailCustomer Bulk
+    description: Retrieve resources in Bulk for RetailCustomers via REST.
+    customer_selectable: true
+    granted_when: Basic and/or Account Info and/or ProgramEnrollment Info authorized.
+additional_scope:
+  parameter: AdditionalScope
+  format: Underscore-delimited list of customer-authorized selections.
+  values:
+    - value: Usage
+      description: Interval usage data for authorized service agreements.
+    - value: Billing
+      description: Billing information including billed usage and cost.
+    - value: Basic
+      description: Basic customer information.
+    - value: Account
+      description: Account information.
+    - value: ProgramEnrollment
+      description: Demand response and other program enrollment information.
+authorization_parameters:
+  - parameter: IntervalDuration
+    description: Authorized interval durations in seconds (published example 900_3600).
+  - parameter: BlockDuration
+    description: Block duration of returned data (published example Daily).
+  - parameter: HistoryLength
+    description: Third-party registered historical length.
+  - parameter: AccountCollection
+    description: Count of authorized service agreements.
+  - parameter: BR
+    description: Third-party identifier.
+  - parameter: dataCustodianId
+    description: Always PGE for Share My Data.
+notes: >-
+  The mapping document also publishes worked example scope strings per service
+  agreement type (Electric, Gas, Electric + Gas) for each combination of
+  authorized data groups; those rules are captured above under granted_when
+  rather than duplicated. FB numbers are ESPI-standard function blocks, so this
+  scope model is portable across Green Button Connect My Data data custodians.

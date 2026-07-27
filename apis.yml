@@ -126,6 +126,22 @@ apis:
     url: schemas/pge-share-my-data-click-thru-2.0-retailcustomer-20180315.xsd
   - type: OpenAPI
     url: openapi/green-button-alliance-espi-openapi.json
+  - type: Overlay
+    url: overlays/pge-green-button-alliance-espi-overlay.yaml
+  - type: Webhooks
+    url: asyncapi/pge-share-my-data-notifications.yml
+  - type: RateLimits
+    url: rate-limits/pge-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/pge-problem-types.yml
+  - type: Conventions
+    url: conventions/pge-conventions.yml
+  - type: DataModel
+    url: data-model/pge-data-model.yml
+  - type: Sandbox
+    url: sandbox/pge-sandbox.yml
+  - type: AgentSkill
+    url: skills/_index.yml
   - type: Example
     url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip
   - type: SDK
@@ -188,9 +204,23 @@ apis:
     url: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
   - type: Registration
     url: https://sharemydata.pge.com/
+  - type: Authentication
+    url: authentication/pge-authentication.yml
+  - type: OAuthScopes
+    url: scopes/pge-scopes.yml
+  - type: Sandbox
+    url: sandbox/pge-sandbox.yml
   - type: Reference
     url: http://naesb.org/espi
 common:
+- type: AgenticAccess
+  url: agentic-access/pge-agentic-access.yml
+- type: DomainSecurity
+  url: security/pge-domain-security.yml
+- type: OAuthScopes
+  url: scopes/pge-scopes.yml
+- type: Authentication
+  url: authentication/pge-authentication.yml
 - type: Website
   url: https://www.pge.com/
 - type: Documentation
@@ -205,10 +235,54 @@ common:
   url: https://www.pge.com/en/newsroom/currents.html
 - type: VulnerabilityDisclosure
   url: https://www.pge.com/en/about/company-information/vulnerability-disclosure-policy.html
-- type: Privacy
+- type: VulnerabilityDisclosure
+  url: security/pge-vulnerability-disclosure.yml
+- type: Security
+  url: https://www.pge.com/en/about/company-information/vulnerability-disclosure-policy.html
+- type: PrivacyPolicy
   url: https://www.pge.com/en/privacy-center.html
 - type: About
   url: https://www.pge.com/en/about/company-information/company-profile.html
+- type: DeveloperPortal
+  url: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+- type: APIReference
+  url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+- type: GettingStarted
+  url: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html#getstarted
+- type: Support
+  url: mailto:ShareMyData@pge.com
+- type: SignUp
+  url: https://sharemydata.pge.com/
+- type: TermsOfService
+  url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf
+- type: Packages
+  url: packages/pge-packages.yml
+- type: SDKs
+  url: packages/pge-packages.yml
+- type: LLMsTxt
+  url: llms/pge-llms.txt
+- type: Overlay
+  url: overlays/pge-green-button-alliance-espi-overlay.yaml
+- type: Conformance
+  url: conformance/pge-conformance.yml
+- type: ErrorCatalog
+  url: errors/pge-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/pge-lifecycle.yml
+- type: ChangeLog
+  url: changelog/pge-changelog.yml
+- type: Conventions
+  url: conventions/pge-conventions.yml
+- type: DataModel
+  url: data-model/pge-data-model.yml
+- type: RateLimits
+  url: rate-limits/pge-rate-limits.yml
+- type: Sandbox
+  url: sandbox/pge-sandbox.yml
+- type: Webhooks
+  url: asyncapi/pge-share-my-data-notifications.yml
+- type: AgentSkill
+  url: skills/_index.yml
 - type: Reference
   url: https://pge-energydatarequest.com/
 - type: Reference

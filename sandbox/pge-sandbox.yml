@@ -1,0 +1,99 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  (HTTP 200, fetched 2026-07-27) and
+  https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
+  (HTTP 200).
+docs: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+description: >-
+  PG&E runs a separate, publicly named TEST authorization server and a mandatory
+  three-part registration test that every third party must pass before
+  production access. There is no anonymous sandbox and no free test key: the
+  test environment is reachable only with the client_id/client_secret issued at
+  registration plus a client X.509 certificate. Test and production are
+  separated by URL path segment (/datacustodian/test/oauth/v2/ vs
+  /datacustodian/oauth/v2/), not by key prefix.
+test_vs_live:
+  separation: url-path
+  test_authorization_server: https://api.pge.com/datacustodian/test/oauth/v2
+  test_token_endpoint: https://api.pge.com/datacustodian/test/oauth/v2/token
+  test_authorize_endpoint: https://api.pge.com/datacustodian/test/oauth/v2/authorize
+  production_token_endpoint: https://api.pge.com/datacustodian/oauth/v2/token
+  production_authorize_endpoint: https://sharemydata.pge.com/myAuthorization
+  resource_host: >-
+    https://api.pge.com/GreenButtonConnect/espi/1_1/resource — the same ESPI
+    resource host is used for connectivity testing; the test separation is on
+    the OAuth side.
+  cutover_note: >-
+    "Upon completing testing, you must repoint your application to the
+    Production Endpoints for Authorization Code and Access Token requests."
+  verified: >-
+    GET https://api.pge.com/datacustodian/test/oauth/v2/token returned HTTP 400
+    with an RFC 6749 error body anonymously on 2026-07-27 — the test server is
+    live.
+prerequisites:
+  - Registered application at https://sharemydata.pge.com/ with a US EIN
+  - client_id and client_secret from the Registration Milestones table
+  - A CA-issued TLS 1.2 SHA-2 X.509 client certificate (RSA >= 2048 bits); self-signed rejected
+  - PG&E's own Entrust SSL certificate, downloaded from the portal under Manage Registration
+  - Registered Redirect URI(s), Third-Party Portal URI and Notification URI
+  - Tests must be completed within 90 days or the registration expires
+required_tests:
+  - name: API Connectivity Test
+    steps:
+      - >-
+        POST grant_type=client_credentials to the TEST token endpoint with an
+        Authorization: Basic base64(client_ID:client_Secret) header, over mutual TLS.
+      - Receive an XML Response containing client_access_token, expires_in, scope, token_type.
+      - GET https://api.pge.com/GreenButtonConnect/espi/1_1/resource/ReadServiceStatus
+        with Authorization Bearer <client_access_token>.
+      - Expect a ServiceStatus document with currentStatus of 1.
+  - name: OAuth Test
+    launched_from: The "OAuth Test" box in the Share My Data third-party portal.
+    steps:
+      - PG&E issues a 302 to your registered ThirdPartyPortalURI with dummy scope
+        parameters ({ThirdPartyPortalURI}?scope=xxx&ThirdPartyID={dataCustodianId}).
+      - Your application redirects to the TEST authorize endpoint requesting an
+        authorization code.
+      - PG&E issues a 302 back to your Redirect URI carrying a dummy authorization code.
+      - Your application POSTs to the TEST token endpoint (SSL certificate attached)
+        to exchange the code for a test access_token / refresh_token pair.
+  - name: ApplicationInformation resource request
+    steps:
+      - Retrieve your own registered application record using the
+        registration_access_token.
+sample_data:
+  - name: DownloadSampleData resource
+    path: /GreenButtonConnect/espi/1_1/resource/DownloadSampleData
+    token: client_access_token
+    note: PG&E's own in-API sample-data resource, listed in Supported-APIs.pdf.
+  - name: MeterReadings example payload
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip
+    http_status: 200
+    note: 278,579-byte worked MeterReadings_Example.xml. Linked, not vendored.
+  - name: ServiceStatus expected response
+    example: |
+      <ServiceStatus xsi:schemaLocation="http://naesb.org/espi espiDerived.xsd"
+                     xmlns="http://naesb.org/espi"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <currentStatus>1</currentStatus>
+      </ServiceStatus>
+tooling:
+  - name: SoapUI walkthrough
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
+    note: >-
+      PG&E's reference walkthrough for the first connectivity step (retrieving a
+      Client Access Token) over mutual 2-way SSL.
+not_available:
+  anonymous_sandbox: false
+  self_serve_test_key: false
+  test_clock_or_time_simulation: not published
+  qa_host: >-
+    sharemydataqa.pge.com is named in PG&E release notes as the QA
+    dataCustodianScopeSelectionScreenURI host but does not resolve publicly
+    (DNS failure, 2026-07-27).
+no_invented_values: >-
+  Every value above is reproduced from PG&E's own published documents. The token
+  and authorization-code strings shown in PG&E's examples are PG&E's
+  illustrative values and are not reproduced here as usable credentials.

@@ -1,0 +1,84 @@
+generated: '2026-07-27'
+method: generated
+source: openapi/green-button-alliance-espi-openapi.json
+description: Recommended x-agentic-access execution contracts, classified heuristically from
+  the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
+  audience per deployment. See research/curity/agentic-governance/.
+summary:
+  operations: 7
+  by_action_class:
+    connected: 7
+  by_consequence:
+    read: 7
+  human_in_the_loop_required: 0
+operations:
+- path: /espi/1_1/resource/ApplicationInformation
+  method: get
+  operationId: findApplicationInformations
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /espi/1_1/resource/ApplicationInformation/{applicationInformationId}
+  method: get
+  operationId: getApplicationInformation
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /espi/1_1/resource/Authorization
+  method: get
+  operationId: findAuthorizations
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /espi/1_1/resource/Authorization/{authorizationId}
+  method: get
+  operationId: getAuthorization
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /espi/1_1/resource/Batch/Bulk/{bulkId}
+  method: get
+  operationId: downloadBulkData
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /espi/1_1/resource/UsagePoint
+  method: get
+  operationId: findUsagePoints
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /espi/1_1/resource/UsagePoint/{usagePointId}
+  method: get
+  operationId: getUsagePoint
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none

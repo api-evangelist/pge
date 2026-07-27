@@ -1,0 +1,131 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  (HTTP 200) plus PG&E Supported-APIs.pdf, OAuth_Authorization_ESPI.pdf and the
+  published ESPI XSDs in schemas/. Derived cross-checks against
+  openapi/green-button-alliance-espi-openapi.json (the Green Button Alliance
+  contract for the same standard).
+docs: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+description: >-
+  How every PG&E Share My Data request and response behaves across the whole
+  ESPI surface — the cross-cutting semantics that neither the PDF endpoint table
+  nor the XSDs express. This is a 2013-era REST-over-XML contract implemented
+  competently: Atom/XML rather than JSON, date-range query filtering rather than
+  cursor pagination, a push-notification callback rather than polling, and no
+  idempotency-key contract at all (the surface is read-only apart from one
+  DELETE).
+base_url: https://api.pge.com/GreenButtonConnect/espi/1_1/resource
+oauth_base_url: https://api.pge.com/datacustodian/oauth/v2
+api_style: >-
+  REST over HTTPS returning NAESB REQ.21 ESPI 1.1 Green Button Atom/XML. No JSON
+  representation is offered for resources; OAuth token errors are JSON and OAuth
+  token success bodies are XML.
+media_types:
+  resources: application/atom+xml (ESPI Atom feed, namespace http://naesb.org/espi)
+  oauth_token_response: XML Response document (client_credentials) / JSON-shaped body (authorization_code examples)
+  oauth_errors: application/json ({"error":"...","error_description":"..."})
+authentication:
+  scheme: >-
+    OAuth 2.0 bearer token over mandatory mutual TLS 1.2 with a CA-issued client
+    X.509 certificate.
+  token_classes: [client_access_token, access_token (per customer), registration_access_token]
+  detail: authentication/pge-authentication.yml
+  scopes: scopes/pge-scopes.yml
+idempotency:
+  supported: false
+  mechanism: none published
+  rationale: >-
+    The Share My Data surface is GET-only apart from HTTP DELETE on the
+    Authorization resource (revocation), which is naturally idempotent. PG&E
+    documents no Idempotency-Key header, no request-replay contract and no
+    idempotent POST. No Idempotency pointer is emitted for this provider.
+pagination:
+  style: date-range-filter
+  note: >-
+    ESPI feeds are filtered by publication or update window rather than paged by
+    cursor or offset. PG&E documents no page/limit/offset parameters and no
+    next-link pagination beyond standard Atom feed links.
+  request_params:
+    published-min: Start of the publication window. Zulu time only.
+    published-max: End of the publication window. Zulu time only.
+    updated-min: >-
+      Start of the update window — returns all changes that occurred in the
+      window. Added in Release 3.0 (15 November 2018) as an alternative to
+      published-min/max.
+    updated-max: End of the update window.
+    correlationID: Supplied on asynchronous Batch requests to correlate the callback.
+  date_format: >-
+    Zulu (UTC) only. PG&E states explicitly that other date formats for date
+    parameters in API requests are not supported.
+  function_block: FB=37 (Query Parameters) covers published-max / published-min.
+async_and_events:
+  model: >-
+    Request/acknowledge then push-notify then GET. Large or bulk requests are
+    accepted asynchronously; PG&E POSTs a notification containing retrieval URIs
+    to the third party's registered Notification URI; the third party then GETs
+    the prepared resource.
+  function_block: FB=39 (Push model — Post Notification of data being ready followed by GET)
+  detail: asyncapi/pge-share-my-data-notifications.yml
+request_tracing:
+  headers:
+    x-transaction: >-
+      Supported since Release 4.0 (20 March 2023) to link PG&E's response to a
+      specific asynchronous API call, returned with a Correlation ID when the
+      requested file is ready.
+    x-transaction-id: Observed on live gateway responses (Mulesoft-API-Gateway).
+    x-tracking-id: Observed on live gateway responses.
+  correlation_id: Carried through the asynchronous batch request and its notification.
+versioning:
+  scheme: uri-path
+  current: espi/1_1
+  oauth_path_version: v2 (/datacustodian/oauth/v2/)
+  release_track: >-
+    PG&E versions the platform in named releases (Release 1.1, 2.0, 3.0, 4.0,
+    plus Click-Thru and EDS releases) announced as dated release notes on the
+    third-party page.
+  detail: lifecycle/pge-lifecycle.yml
+  breaking_change_practice: >-
+    PG&E has shipped at least one hard, non-backwards-compatible cutover (the
+    Click-Through Phase 2 OAuth change with a stated cut-off date of 29 June
+    2018), announced in advance with the date named.
+error_envelope:
+  oauth: >-
+    RFC 6749 JSON — {"error":"invalid_request","error_description":"..."}.
+    Verified live anonymously (HTTP 405 "GET not permitted", HTTP 400 "Missing
+    grant_type").
+  transport: >-
+    HTTP 400 with an "Invalid Certificate" body from the gateway when the mutual
+    TLS client certificate is absent or invalid.
+  resource: >-
+    ESPI/HTTP status semantics; HTTP 204 is returned for both synchronous and
+    asynchronous calls when no data is available for the requested range (added
+    in Release 4.0, 20 March 2023).
+  detail: errors/pge-problem-types.yml
+rate_limit_signaling:
+  published_limits: true
+  headers: none documented
+  detail: rate-limits/pge-rate-limits.yml
+metadata_and_expansion:
+  custom_metadata: not supported
+  field_expansion: >-
+    Not a query feature. Granularity is expressed by the resource tree itself —
+    Subscription/UsagePoint/MeterReading/IntervalBlock — and by which ESPI
+    function blocks the customer authorized.
+  sparse_fields: not supported
+data_semantics:
+  customer_class_indicator: RES, AGR, COM/IND or Other, returned per authorized SAID (Release 3.0).
+  meter_id: >-
+    utcNumber added Phase 1 (March 2023) and full Meter ID identification Phase 2
+    (20 June 2024) for multi-meter service agreements.
+  reading_quality: >-
+    Reading Quality Indicator values distinguish estimation types; value 19
+    ("Revenue quality: valid and acceptable for billing purposes") is noted by
+    PG&E as an extension beyond the original ESPI standard.
+related:
+  - authentication/pge-authentication.yml
+  - scopes/pge-scopes.yml
+  - errors/pge-problem-types.yml
+  - lifecycle/pge-lifecycle.yml
+  - rate-limits/pge-rate-limits.yml
+  - sandbox/pge-sandbox.yml

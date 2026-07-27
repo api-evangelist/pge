@@ -1,0 +1,185 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  PG&E's own standards statements on
+  https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  (HTTP 200) and Supported-APIs.pdf / OAuth_Authorization_ESPI.pdf /
+  Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf, plus live
+  anonymous probes of api.pge.com and derivation from the published XSDs in
+  schemas/ and openapi/green-button-alliance-espi-openapi.json.
+description: >-
+  Which cross-cutting and industry standards PG&E Share My Data actually
+  conforms to. The energy-sector answer is unusually clean: this is a genuine
+  NAESB REQ.21 ESPI 1.1 / Green Button Connect My Data implementation with a
+  real OAuth 2.0 authorization server, and it is equally clear about what it is
+  NOT — not OpenID Connect, not RFC 9457, not OpenADR, not IEEE 2030.5, not
+  OCPP/OCPI, not IEC CIM.
+standards:
+  - id: naesb-req21-espi-1.1
+    name: NAESB REQ.21 Energy Services Provider Interface (ESPI) 1.1
+    conforms: true
+    evidence: >-
+      Production path segment /GreenButtonConnect/espi/1_1/resource/, the
+      http://naesb.org/espi XML namespace in PG&E's published XSDs and sample
+      payloads, and PG&E's own statement that it implements the "current North
+      American Energy Standards Board (NAESB) Energy Service Provider Interface
+      (ESPI) standard for authorization".
+  - id: green-button-connect-my-data
+    name: Green Button Connect My Data (GBCMD)
+    conforms: true
+    evidence: >-
+      Share My Data is PG&E's branded GBCMD implementation; PG&E states it
+      "follows the Green Button Connect My Data implementation agreements" and
+      links to greenbuttondata.org and the OpenSG Green Button conformance
+      blocks workbook.
+  - id: green-button-alliance-certification
+    name: Green Button Alliance certification
+    conforms: unverified
+    evidence: >-
+      PG&E displays no GBA certification mark on the Share My Data or
+      third-party pages, and no reachable GBA registry lists certified
+      utilities. greenbuttonalliance.org returned HTTP 200 but names no
+      utilities; /certification returned HTTP 301.
+  - id: oauth2-rfc6749
+    name: OAuth 2.0 (RFC 6749)
+    conforms: true
+    evidence: >-
+      Live authorization server at /datacustodian/oauth/v2/ returning RFC
+      6749-shaped errors (invalid_request / error_description) verified
+      anonymously 2026-07-27; authorization_code, client_credentials and
+      refresh_token grants documented; ESPI function block FB=14 (Authorization
+      and Authentication — OAuth 2.0) always returned in scope.
+  - id: oauth2-rfc8414-metadata
+    name: OAuth 2.0 Authorization Server Metadata (RFC 8414)
+    conforms: false
+    evidence: >-
+      /.well-known/oauth-authorization-server returns HTTP 404 on api.pge.com
+      and www.pge.com (probed 2026-07-27).
+  - id: openid-connect
+    name: OpenID Connect
+    conforms: false
+    evidence: >-
+      /.well-known/openid-configuration returns HTTP 404 on www.pge.com,
+      api.pge.com and sharemydata.pge.com (probed 2026-07-27). PG&E's own
+      documentation describes plain OAuth 2.0.
+  - id: mutual-tls
+    name: Mutual TLS client authentication (two-way SSL, TLS 1.2)
+    conforms: true
+    evidence: >-
+      PG&E requires a CA-issued SHA-2 X.509 client certificate (RSA >= 2048
+      bits) on every non-redirect request. Verified live: anonymous requests to
+      ESPI resources return HTTP 400 "Invalid Certificate".
+  - id: rfc9116-security-txt
+    name: security.txt (RFC 9116)
+    conforms: false
+    evidence: >-
+      /.well-known/security.txt returns HTTP 404 on all three hosts, although a
+      full vulnerability disclosure policy is published on the corporate site.
+  - id: rfc9457-problem-details
+    name: Problem Details for HTTP APIs (RFC 9457)
+    conforms: false
+    evidence: >-
+      No application/problem+json anywhere. Errors are RFC 6749 JSON on the
+      OAuth surface and plain gateway messages on the resource surface — see
+      errors/pge-problem-types.yml.
+  - id: atom-rfc4287
+    name: Atom Syndication Format (RFC 4287)
+    conforms: true
+    evidence: >-
+      ESPI resources are returned as Atom feeds; PG&E publishes an atom.xsd in
+      its ESPI_XSDs bundle (saved as schemas/pge-share-my-data-atom.xsd).
+  - id: xml-schema
+    name: W3C XML Schema (XSD)
+    conforms: true
+    evidence: >-
+      Five first-party XSDs published across two generations, all parsing —
+      schemas/ in this repo. This is PG&E's machine-readable contract.
+  - id: openapi
+    name: OpenAPI
+    conforms: false
+    evidence: >-
+      PG&E publishes no first-party OpenAPI/Swagger. /openapi.json and
+      /swagger.json return 404 on www.pge.com and sharemydata.pge.com. The one
+      OpenAPI in this repo is the Green Button Alliance's description of the
+      standard, whose declared server is the GBA sandbox.
+  - id: asyncapi
+    name: AsyncAPI
+    conforms: false
+    evidence: >-
+      PG&E documents an asynchronous notification callback but publishes no
+      AsyncAPI document — see asyncapi/pge-share-my-data-notifications.yml.
+  - id: rfc8594-sunset-header
+    name: The Sunset HTTP Header Field (RFC 8594)
+    conforms: false
+    evidence: No Sunset or Deprecation header support is documented.
+  - id: openadr
+    name: OpenADR
+    conforms: false
+    evidence: >-
+      Not referenced on any probed PG&E surface. Demand response program
+      enrollment is exposed through ESPI-shaped Batch resources
+      (BulkRetailDRPrgInfo / RetailDRPrgInfo), not OpenADR.
+  - id: ieee-2030.5
+    name: IEEE 2030.5 (Smart Energy Profile 2.0)
+    conforms: false
+    evidence: Not referenced on any probed PG&E surface.
+  - id: ocpp-ocpi
+    name: OCPP / OCPI (EV charging)
+    conforms: false
+    evidence: >-
+      Not referenced, despite PG&E's EV programmes. No EV charging API is
+      published.
+  - id: iec-cim-61968-61970
+    name: IEC CIM 61968 / 61970
+    conforms: false
+    evidence: Not referenced on any probed PG&E surface.
+  - id: cdr-consumer-data-standards
+    name: Australian CDR Consumer Data Standards
+    conforms: false
+    evidence: Not applicable outside Australia; recorded for cross-market comparability.
+regulatory:
+  - id: ca-puc-8380
+    name: California Public Utilities Code section 8380 (SB 1476, 2010)
+    applies: true
+    evidence: >-
+      Statutory basis for customer energy data privacy and third-party access in
+      California; linked from PG&E's own third-party developer page.
+  - id: cpuc-cisr-smd-tariff
+    name: >-
+      CPUC Customer Information Service Request for Share My Data (CISR-SMD),
+      Electric Sample Form 79-1186, Cal. P.U.C. Sheet 55826-E, Advice 6900-E
+    applies: true
+    effective: '2023-04-01'
+    evidence: >-
+      Filed tariff form fetched at HTTP 200 from pge.com/tariffs; Share My Data
+      is a tariffed service.
+  - id: cpuc-electric-rule-24-gas-rule-25
+    name: CPUC Electric Rule 24 / Gas Rule 25 (demand response provider data access)
+    applies: true
+    evidence: >-
+      Named by PG&E as the framework under which demand response providers use
+      Share My Data; drove the Expanded Data Set release (2018-09-27).
+  - id: cpuc-d-14-05-016
+    name: CPUC Decision 14-05-016 (aggregated energy data)
+    applies: true
+    evidence: >-
+      Governs the separate Energy Data Request Program at
+      pge-energydatarequest.com — form-gated CSV downloads, not an API.
+  - id: cpuc-privacy-rules
+    name: CPUC Rules Regarding Privacy and Security Protections for Energy Usage Data
+    applies: true
+    evidence: Cited by PG&E as binding on third parties receiving customer data.
+  - id: us-federal-energy-data-mandate
+    name: United States federal energy consumer data mandate
+    applies: false
+    evidence: >-
+      None exists. Green Button at national level is a voluntary NAESB/NIST
+      standard that began as a White House challenge, in PG&E's own words.
+certifications_published: none
+certifications_note: >-
+  No SOC 2, ISO 27001, PCI DSS, HIPAA, FedRAMP or CSA STAR attestation is
+  published for the Share My Data platform, and no trust centre exists
+  (trust.pge.com and security.pge.com were probed and are not published trust
+  surfaces). PG&E's assurance story is regulatory (CPUC tariff and privacy
+  rules), not certification-based — which is why no `Compliance` pointer is
+  emitted for this provider.

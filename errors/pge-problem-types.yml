@@ -1,0 +1,116 @@
+generated: '2026-07-27'
+method: derived
+source: >-
+  Derived from the 4xx responses declared in
+  openapi/green-button-alliance-espi-openapi.json plus the error bodies observed
+  live and anonymously against api.pge.com on 2026-07-27 (recorded in
+  review.yml probes) and the response codes documented in PG&E's release notes.
+docs: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+format: none
+format_note: >-
+  PG&E does NOT use RFC 9457 problem+json. Three different error shapes coexist:
+  RFC 6749 JSON errors from the OAuth authorization server, a plain gateway
+  string/JSON for mutual-TLS rejection, and HTTP status semantics with ESPI
+  Atom/XML on the resource surface. There is no published error-code registry.
+envelopes:
+  - surface: OAuth 2.0 authorization server (/datacustodian/oauth/v2/, /datacustodian/test/oauth/v2/)
+    media_type: application/json
+    shape: '{"error": "<rfc6749_code>", "error_description": "<human readable>"}'
+    standard: RFC 6749 section 5.2
+  - surface: API gateway (mutual TLS layer, api.pge.com)
+    media_type: application/json
+    shape: Invalid Certificate message returned with HTTP 400 by Mulesoft-API-Gateway.
+  - surface: ESPI resource (/GreenButtonConnect/espi/1_1/resource/)
+    media_type: application/atom+xml
+    shape: HTTP status codes; success payloads are ESPI Atom feeds.
+problems:
+  - status: 400
+    code: invalid_request
+    title: Missing grant_type
+    surface: oauth
+    observed_body: '{"error":"invalid_request","error_description":"Missing grant_type"}'
+    observed_at: https://api.pge.com/datacustodian
+    observed_date: '2026-07-27'
+    remediation: >-
+      Send grant_type=client_credentials or grant_type=authorization_code on the
+      token request.
+  - status: 405
+    code: invalid_request
+    title: GET not permitted
+    surface: oauth
+    observed_body: '{"error":"invalid_request","error_description":"GET not permitted"}'
+    observed_at: https://api.pge.com/datacustodian/oauth/v2/token
+    observed_date: '2026-07-27'
+    remediation: The token endpoint is POST-only.
+  - status: 400
+    title: Invalid Certificate
+    surface: gateway
+    observed_at: >-
+      Every https://api.pge.com/GreenButtonConnect/espi/1_1/resource/* path
+      probed anonymously.
+    observed_date: '2026-07-27'
+    remediation: >-
+      Attach a valid, unexpired, CA-issued SHA-2 X.509 client certificate (RSA
+      >= 2048 bits) and complete the mutual TLS handshake. Self-signed
+      certificates are rejected.
+  - status: 404
+    title: 'No listener for endpoint'
+    surface: gateway
+    observed_body: 'No listener for endpoint: /<path>'
+    observed_at: Invented control paths on api.pge.com
+    observed_date: '2026-07-27'
+    remediation: >-
+      The path does not exist on the gateway. Use the resource paths enumerated
+      in PG&E's Supported-APIs reference.
+    note: >-
+      Recorded because it is the control signal that distinguishes a real
+      mTLS-protected listener from a catch-all.
+  - status: 204
+    title: No data available for the requested range
+    surface: resource
+    source_doc: PG&E release notes, Release 4.0 (2023-03-20)
+    remediation: >-
+      Widen or shift the published-min/published-max or updated-min/updated-max
+      window. Applies to both synchronous and asynchronous calls.
+  - status: 400
+    title: Bad request
+    surface: resource
+    source_operation:
+      - openapi/green-button-alliance-espi-openapi.json#findApplicationInformations
+      - openapi/green-button-alliance-espi-openapi.json#getApplicationInformation
+      - openapi/green-button-alliance-espi-openapi.json#findAuthorizations
+      - openapi/green-button-alliance-espi-openapi.json#getAuthorization
+      - openapi/green-button-alliance-espi-openapi.json#downloadBulkData
+      - openapi/green-button-alliance-espi-openapi.json#findUsagePoints
+      - openapi/green-button-alliance-espi-openapi.json#getUsagePoint
+    note: Declared on every operation of the Green Button Alliance ESPI contract.
+  - status: 403
+    title: Forbidden
+    surface: resource
+    source_operation:
+      - openapi/green-button-alliance-espi-openapi.json#findApplicationInformations
+      - openapi/green-button-alliance-espi-openapi.json#getApplicationInformation
+      - openapi/green-button-alliance-espi-openapi.json#findAuthorizations
+      - openapi/green-button-alliance-espi-openapi.json#getAuthorization
+      - openapi/green-button-alliance-espi-openapi.json#downloadBulkData
+      - openapi/green-button-alliance-espi-openapi.json#findUsagePoints
+      - openapi/green-button-alliance-espi-openapi.json#getUsagePoint
+    remediation: >-
+      Use the correct token class for the resource — client_access_token for
+      third-party-level resources, the customer access_token for Subscription
+      resources, registration_access_token for ApplicationInformation.
+  - status: 202
+    title: Accepted (asynchronous)
+    surface: resource
+    source_operation:
+      - openapi/green-button-alliance-espi-openapi.json#downloadBulkData
+    note: >-
+      Not an error. Recorded because the asynchronous Batch family acknowledges
+      with 202 and delivers the result to the registered Notification URI — see
+      asyncapi/pge-share-my-data-notifications.yml.
+gaps:
+  - >-
+    PG&E publishes no error-code reference, no error taxonomy and no remediation
+    guide for the ESPI resource surface. Everything above is either observed
+    live, declared in the Green Button Alliance contract for the same standard,
+    or stated in PG&E's release notes.

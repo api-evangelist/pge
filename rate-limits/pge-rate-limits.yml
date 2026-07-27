@@ -1,0 +1,53 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+provider: Pacific Gas and Electric
+providerId: pge
+generated: '2026-07-27'
+method: searched
+created: '2026-07-27'
+modified: '2026-07-27'
+source: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+docs: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+tags:
+  - Rate Limiting
+  - Green Button
+  - Energy Data
+description: >-
+  PG&E publishes its Share My Data API threshold limits openly on the
+  third-party developer page — unusual for a US utility. Quoted by PG&E as being
+  in place "due to finite system resources as well as to allow PG&E to reduce
+  operational risks ... to ensure ongoing platform stability". Limits are scoped
+  per vendor and per Client ID, and the daily window resets at 5 p.m. Pacific
+  Time rather than at midnight UTC.
+limits:
+  - name: Requests per second per vendor
+    scope: vendor (across all of that vendor's Client IDs)
+    metric: requests_per_second
+    limit: 1
+    timeFrame: second
+  - name: API calls per hour per Client ID
+    scope: client_id
+    metric: requests_per_hour
+    limit: 2000
+    timeFrame: hour
+  - name: API calls per 24-hour period per Client ID
+    scope: client_id
+    metric: requests_per_day
+    limit: 20000
+    timeFrame: day
+    reset: Daily threshold resets at 5 p.m. Pacific Time.
+headers:
+  documented: false
+  note: >-
+    PG&E documents no RateLimit-* / X-RateLimit-* response headers and no 429
+    behaviour. It does document an x-transaction header (Release 4.0, 20 March
+    2023) used with a Correlation ID to link asynchronous responses.
+responseCodes:
+  throttled: not documented
+change_policy: >-
+  "Please be aware that our acceptable use conditions are subject to change ...
+  we will be certain to communicate any such change in advance of
+  implementation."
+usage_metrics: >-
+  Vendor API usage metrics are exposed inside the Share My Data third-party
+  vendor portal (Release 3.0, 15 November 2018), not through an API.

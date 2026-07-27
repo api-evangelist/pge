@@ -1,0 +1,145 @@
+generated: '2026-07-27'
+method: derived
+source: >-
+  Derived from the resource nesting in PG&E's Supported-APIs.pdf endpoint table
+  (reproduced in review.yml documentedEndpoints), the five first-party ESPI XSDs
+  in schemas/, and the schemas and $ref links in
+  openapi/green-button-alliance-espi-openapi.json. Cross-referenced against
+  PG&E's published Supported Relational Data Model PDF.
+docs: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Relational-Data-Model.pdf
+description: >-
+  The Share My Data entity graph is the NAESB ESPI 1.1 model, and PG&E's URL
+  nesting is the relationship map: an Authorization grants a Subscription, a
+  Subscription holds UsagePoints (one per service agreement), a UsagePoint holds
+  MeterReadings, a MeterReading holds IntervalBlocks of interval readings, and a
+  UsagePoint also holds UsageSummary records for billing periods. RetailCustomer
+  carries the account, program-enrollment and service-agreement side, reached
+  through the Batch RetailCustomer resources.
+serialization: ESPI Atom/XML, namespace http://naesb.org/espi
+entities:
+  - name: ApplicationInformation
+    description: >-
+      The registered third-party application record held by the Data Custodian —
+      client identifiers, redirect and notification URIs, application status and
+      type, and the third party's scope registration.
+    path: /espi/1_1/resource/ApplicationInformation/{ApplicationInformationID}
+    token: registration_access_token
+    schema_sources:
+      - openapi/green-button-alliance-espi-openapi.json#/components/schemas/ApplicationInformation
+      - schemas/pge-share-my-data-espiDerived-20180821.xsd
+  - name: Authorization
+    description: >-
+      A customer's (or third party's) grant — the access token, authorized
+      function-block scope string, authorization period and status. Deletable to
+      revoke.
+    path: /espi/1_1/resource/Authorization/{AuthorizationID}
+    token: client_access_token
+    operations: [GET feed, GET detail, DELETE]
+    schema_sources:
+      - openapi/green-button-alliance-espi-openapi.json#/components/schemas/Authorization
+      - schemas/pge-share-my-data-espiDerived-20180821.xsd
+  - name: Subscription
+    description: >-
+      The container created by an authorization; the root of the customer's
+      authorized data tree. Every customer-level resource path is prefixed
+      Subscription/{SubscriptionID}.
+    path: /espi/1_1/resource/Subscription/{SubscriptionID}
+    token: access_token (per customer)
+  - name: UsagePoint
+    description: >-
+      One metered service agreement (electric or gas). Carries the service
+      category, meter identification (utcNumber, Meter ID since 2023/2024) and
+      the customer class indicator (RES, AGR, COM/IND, Other).
+    path: /espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}
+    schema_sources:
+      - openapi/green-button-alliance-espi-openapi.json#/components/schemas/UsagePoint
+      - schemas/pge-share-my-data-espiDerived-20180821.xsd
+  - name: MeterReading
+    description: >-
+      A stream of readings for a UsagePoint, bound to a ReadingType. Its
+      identifier re-encoded in the Meter ID Phase 2 release (2024-06-20).
+    path: >-
+      /espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/MeterReading/{MeterReadingID}
+  - name: IntervalBlock
+    description: >-
+      A block of interval readings under a MeterReading — the actual interval
+      usage values, with reading quality indicators and power-of-ten multipliers.
+    path: >-
+      /espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/MeterReading/{MeterReadingID}/IntervalBlock/{IntervalBlockID}
+  - name: ReadingType
+    description: >-
+      The measurement semantics for a MeterReading — commodity, unit of measure,
+      accumulation and time attributes, currency and multipliers.
+    path: /espi/1_1/resource/ReadingType/{ReadingTypeID}
+    token: access_token (per customer)
+  - name: UsageSummary
+    description: >-
+      Billing-period summary for a UsagePoint — billed total usage, billed demand
+      and, when Billing Info is authorized, bill cost.
+    path: >-
+      /espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/UsageSummary/{UsageSummaryID}
+  - name: LocalTimeParameters
+    description: Time zone and daylight-saving parameters used to interpret interval timestamps.
+    path: /espi/1_1/resource/LocalTimeParameters/{LocalTimeParametersID}
+    token: access_token (per customer)
+  - name: RetailCustomer
+    description: >-
+      The customer/account side of the model — account name, address and ID,
+      service elements, service agreement (SAID) detail, rate plan and tariff
+      (including Medical Baseline, CARE, FERA, TBS, CCA_TBS, Solar Choice), meter
+      read cycle, and Rule 24 / Rule 25 Expanded Data Set elements.
+    path: /espi/1_1/resource/Batch/RetailCustomer/{RetailCustomerID}
+    schema_sources:
+      - schemas/pge-share-my-data-retailcustomer-20180802.xsd
+  - name: RetailDRPrgInfo
+    description: >-
+      Demand response program enrollment information for a retail customer,
+      exposed under Rule 24 / Rule 25.
+    path: /espi/1_1/resource/Batch/RetailDRPrgInfo/{RetailCustomerID}
+  - name: Batch
+    description: >-
+      The asynchronous delivery family — Bulk/{BulkID},
+      Subscription/{SubscriptionID}, BulkRetailCustomerInfo/{BulkID},
+      BulkRetailDRPrgInfo/{BulkID}. Requests are acknowledged and results are
+      announced to the registered Notification URI.
+    path: /espi/1_1/resource/Batch/...
+    token: client_access_token (Bulk level)
+    detail: asyncapi/pge-share-my-data-notifications.yml
+  - name: ServiceStatus
+    description: >-
+      Platform health resource returning currentStatus. Used as the first
+      connectivity test.
+    path: /espi/1_1/resource/ReadServiceStatus
+    token: client_access_token
+  - name: AtomFeed / AtomEntry / AtomContent / AtomLink
+    description: >-
+      The Atom envelope every ESPI resource is wrapped in; feed/entry/content and
+      typed links carry the relationships between resources.
+    schema_sources:
+      - schemas/pge-share-my-data-atom.xsd
+      - openapi/green-button-alliance-espi-openapi.json#/components/schemas/AtomFeed
+relationships:
+  - {from: ApplicationInformation, to: Authorization, type: has_many, via: third-party registration}
+  - {from: Authorization, to: Subscription, type: has_one, via: authorized subscription URI}
+  - {from: Subscription, to: UsagePoint, type: has_many, via: path nesting}
+  - {from: UsagePoint, to: MeterReading, type: has_many, via: path nesting}
+  - {from: MeterReading, to: IntervalBlock, type: has_many, via: path nesting}
+  - {from: MeterReading, to: ReadingType, type: belongs_to, via: ReadingType link}
+  - {from: UsagePoint, to: UsageSummary, type: has_many, via: path nesting}
+  - {from: UsagePoint, to: LocalTimeParameters, type: belongs_to, via: LocalTimeParameters link}
+  - {from: RetailCustomer, to: UsagePoint, type: has_many, via: service agreement (SAID)}
+  - {from: RetailCustomer, to: RetailDRPrgInfo, type: has_one, via: RetailCustomerID}
+  - {from: Batch, to: Subscription, type: references, via: SubscriptionID}
+  - {from: Batch, to: RetailCustomer, type: references, via: RetailCustomerID or BulkID}
+  - {from: AtomFeed, to: AtomEntry, type: has_many, via: entry}
+  - {from: AtomEntry, to: AtomContent, type: has_one, via: content}
+identifiers:
+  style: >-
+    Opaque path identifiers assigned by the Data Custodian (SubscriptionID,
+    UsagePointID, MeterReadingID, IntervalBlockID, AuthorizationID,
+    RetailCustomerID, BulkID). No typed id prefixes.
+  bulk_id: >-
+    Issued to the third party at approval; replaced the earlier 5-digit Bulk ID
+    with the Client ID in the online authorization flow (Release 3.0, 2018-11-15).
+  said: PG&E service agreement identifier, carried on the RetailCustomer side.
+render: none
