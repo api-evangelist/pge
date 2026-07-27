@@ -1,0 +1,744 @@
+aid: pge
+name: Pacific Gas and Electric
+review:
+  question: >-
+    Does Pacific Gas and Electric expose a real, verifiable public API surface,
+    and is its Green Button / customer-data obligation an actual implementation
+    or only a compliance claim?
+  answer: >-
+    Both, verified. PG&E operates a genuine, live, standards-conformant consumer
+    energy data API — Share My Data, its Green Button Connect My Data
+    implementation — on a MuleSoft API gateway at https://api.pge.com, and it
+    publishes the complete developer contract anonymously on pge.com without a
+    login. This is not a claim inferred from a press release. It was confirmed
+    by differential HTTP probing on 2026-07-27: the ESPI resource paths and the
+    OAuth endpoints return real, distinct protocol errors from a live gateway,
+    while deliberately invented sibling paths return "No listener for endpoint".
+    PG&E is the strongest US utility case found so far and the near-inverse of
+    the Ontario pattern, where a regulator compelled Green Button and produced a
+    service with no developer surface. Here a state tariff plus a voluntary
+    federal-era initiative produced a documented product. The data itself,
+    however, is not open: access is application-approval gated behind CPUC
+    standing, a commercial X.509 certificate and mandatory registration testing,
+    and PG&E publishes no open market or grid API at all.
+  date: '2026-07-27'
+  reviewer: API Evangelist
+  homeMarket: United States
+  tier: utility-retailer
+  organizationType: >-
+    Investor-owned, vertically integrated regulated electric and natural gas
+    utility. Pacific Gas and Electric Company was incorporated in California in
+    1905, is headquartered in Oakland, employs roughly 23,000 people, serves a
+    70,000-square-mile service area in northern and central California with
+    about 5.5 million electric accounts and 4.5 million gas accounts, and is a
+    subsidiary of PG&E Corporation. It owns distribution wires, gas pipes and
+    the smart meters, and therefore holds the customer data. It does not operate
+    the wholesale market — CAISO does — which is why it has consumer data to
+    share and no market data to publish.
+    Source: https://www.pge.com/en/about/company-information/company-profile.html (HTTP 200, fetched 2026-07-27)
+
+mandate:
+  regime: other
+  regimeChoiceRationale: >-
+    Deliberately NOT recorded as green-button-voluntary, and deliberately not as
+    none. The green-button-voluntary value means "adopted without compulsion",
+    and that is not what happened in California. There is no US federal energy
+    consumer-data mandate and no Ontario-style Green Button regulation applies,
+    but California compels third-party access to customer energy data through
+    state statute and a filed CPUC tariff. The regime is therefore a
+    state-level, tariff-based customer data access obligation that PG&E
+    satisfies USING the Green Button / ESPI standard — a shape the enum does not
+    carry, so it is recorded as `other` and named in full below. The data
+    standard field carries the Green Button fact.
+  regimeName: >-
+    California customer energy data access, as follows. (1) California Public
+    Utilities Code Chapter 5, section 8380 et seq., added by Senate Bill 1476
+    (Padilla), chaptered 497, approved by the Governor and filed with the
+    Secretary of State on 29 September 2010 — prohibits an electrical or gas
+    corporation from sharing a customer's consumption data with a third party
+    except as specified, prohibits sale of that data, and requires that a
+    utility operating advanced metering infrastructure ensure the customer has
+    an option to access that data. This is the statutory floor and was read
+    directly from the CPUC-published text linked from PG&E's own third-party
+    developer page. (2) The CPUC-filed Customer Data Access Tariff: PG&E
+    Electric Sample Form No. 79-1186, "Customer Information Service Request For
+    Share My Data (CISR-SMD)", Revised Cal. P.U.C. Sheet No. 55826-E cancelling
+    Revised Cal. P.U.C. Sheet No. 48664-E, Advice 6900-E, submitted 30 March
+    2023, effective 1 April 2023. Share My Data is a tariffed service, not a
+    goodwill programme. (3) Electric Rule 24 and Gas Rule 25, the CPUC demand
+    response provider data access rules, which PG&E names on its own pages as
+    the framework under which DRPs use Share My Data and which drove PG&E's
+    Expanded Data Set project. (4) CPUC Decision 14-05-016, which governs the
+    separate Energy Data Request Program for aggregated data. (5) The CPUC
+    privacy rules (Rules Regarding Privacy and Security Protections for Energy
+    Usage Data, adopted as an attachment to a CPUC decision), which PG&E cites
+    as binding third parties.
+  notFederal: >-
+    Recorded explicitly. The United States has no federal energy consumer data
+    right. There is no FERC or DOE equivalent of the Australian CDR or Ontario's
+    O. Reg. 633/21. Green Button at national level is a voluntary NAESB/NIST
+    standard that began as a White House challenge — PG&E's own Share My Data
+    page says so in those words: "PG&E developed Share My Data in response to a
+    challenge by the White House to utility companies to provide customers with
+    their energy usage information in an easy-to-use format." The compulsion in
+    PG&E's case is entirely Californian.
+  status: live-implemented
+  statusEvidence: >-
+    The strongest grade, and it was earned by differential probing rather than
+    by trusting any statement. Anonymous curl on 2026-07-27 against
+    api.pge.com produced: (a) HTTP 404 with the plain-text body "No listener for
+    endpoint: /bogus-control-xyz123" for an invented top-level path, and the
+    same 404 for /GreenButtonConnect/bogus-xyz, /BogusListenerXyz/espi/1_1/
+    resource/ApplicationInformation and /bogusprefix/espi/1_1/resource/
+    UsagePoint — proving the gateway is NOT a catch-all and that a non-404
+    response is meaningful; (b) HTTP 400 with the JSON body "Invalid
+    Certificate" for every real ESPI resource path, which is a live mutual-TLS
+    listener refusing an anonymous client, not an auth-wall redirect; (c) HTTP
+    405 with {"error":"invalid_request","error_description":"GET not permitted"}
+    on the OAuth token endpoint and HTTP 400 with
+    {"error":"invalid_request","error_description":"Missing grant_type"} on the
+    /datacustodian listener — RFC 6749-shaped errors from a real OAuth 2.0
+    authorization server; (d) server header "Mulesoft-API-Gateway" with
+    x-transaction-id and x-tracking-id headers on those responses. Alongside
+    that, PG&E publishes its own machine-readable and human-readable contract
+    anonymously (see dataStandard.documents and probes below), and the service
+    is a CPUC-filed tariff. Endpoint plus published contract plus filed tariff
+    is implementation, not claim.
+  claimVsImplementation: >-
+    This is the case that shows the two can coincide, and it is worth stating
+    why. PG&E did not merely assert compliance; it shipped a product. The
+    published Supported-APIs reference enumerates around two dozen ESPI
+    resources with HTTP verb, response type (synchronous vs asynchronous), the
+    exact token class required for each, supported query parameters and the ESPI
+    function block each maps to. PG&E ships two SDKs with development guides, a
+    SoapUI walkthrough, the XSD schemas, a worked MeterReadings example, a
+    relational data model, a scope-string mapping and published rate limits.
+    That is a developer experience, and it exists in a country with no mandate
+    requiring one. The contrast with Ontario is the finding: Ontario compelled
+    Green Button by regulation and got vendor-hosted consent portals with no
+    published base URI; California tariffed data access and got a documented,
+    testable API. A mandate is not an implementation, and this is the mirror
+    proof — an implementation can also outrun its mandate.
+  whatWouldChangeThis: >-
+    A downgrade would need the api.pge.com listeners to stop distinguishing real
+    from invented paths, or the Supported-APIs and OAuth guides to disappear
+    behind the sharemydata.pge.com login. An upgrade in completeness (not in
+    status) would be PG&E publishing a first-party OpenAPI or AsyncAPI for the
+    ESPI surface and the notification callback, which it does not.
+  certification:
+    greenButtonAllianceCertified: unverified
+    detail: >-
+      PG&E does not display Green Button Alliance certification marks on its
+      Share My Data or third-party-companies pages, and no reachable GBA
+      registry lists certified utilities.
+      https://www.greenbuttonalliance.org/ returned HTTP 200 but names no state
+      mandate, no CPUC and no PG&E;
+      https://www.greenbuttonalliance.org/certification returned HTTP 301. PG&E
+      does state that "Share My Data follows the Green Button Connect My Data
+      implementation agreements" and links to greenbuttondata.org and to the
+      OpenSG Green Button conformance blocks workbook at osgug.ucaiug.org.
+      Recorded as unverified rather than absent.
+
+dataStandard:
+  name: >-
+    Green Button Connect My Data, implemented on the North American Energy
+    Standards Board (NAESB) REQ.21 Energy Services Provider Interface (ESPI)
+  version: >-
+    ESPI 1.1, taken from PG&E's own production path segment
+    /GreenButtonConnect/espi/1_1/resource/ and from its published XSDs. PG&E
+    names the standard directly on its third-party developer page: "In order to
+    comply with the current North American Energy Standards Board (NAESB) Energy
+    Service Provider Interface (ESPI) standard for authorization, PG&E has
+    implemented OAuth 2.0 Authorization framework" and "Nationally recognized
+    standard Energy Service Provider Interface API format for interoperability
+    with other energy providers." Two schema generations are published side by
+    side: the current set (espiDerived.20180821 / retailcustomer.20180802) and
+    the Click-Thru 2.0 set (espiDerived.20180315 / retailcustomer.20180315).
+  payloadFormat: >-
+    Green Button Atom/XML. Responses are ESPI Atom feeds; the published sample
+    is a 278KB MeterReadings XML document.
+  documents:
+  - title: PG&E Share My Data ESPI Atom schema
+    saved: schemas/pge-share-my-data-atom.xsd
+    sourceURL: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ESPI_XSDs.zip
+    httpStatus: 200
+    fetched: '2026-07-27'
+    parses: true
+    note: 21 top-level declarations. First-party — published by PG&E.
+  - title: PG&E Share My Data espiDerived schema (2018-08-21)
+    saved: schemas/pge-share-my-data-espiDerived-20180821.xsd
+    sourceURL: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ESPI_XSDs.zip
+    httpStatus: 200
+    fetched: '2026-07-27'
+    parses: true
+    note: 104 top-level declarations. First-party.
+  - title: PG&E Share My Data retailcustomer schema (2018-08-02)
+    saved: schemas/pge-share-my-data-retailcustomer-20180802.xsd
+    sourceURL: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ESPI_XSDs.zip
+    httpStatus: 200
+    fetched: '2026-07-27'
+    parses: true
+    note: 117 top-level declarations. First-party.
+  - title: PG&E Share My Data Click-Thru 2.0 espiDerived schema (2018-03-15)
+    saved: schemas/pge-share-my-data-click-thru-2.0-espiDerived-20180315.xsd
+    sourceURL: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/SMD_XSDs_Click_Thru_2.0.zip
+    httpStatus: 200
+    fetched: '2026-07-27'
+    parses: true
+    note: 102 top-level declarations. First-party.
+  - title: PG&E Share My Data Click-Thru 2.0 retailcustomer schema (2018-03-15)
+    saved: schemas/pge-share-my-data-click-thru-2.0-retailcustomer-20180315.xsd
+    sourceURL: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/SMD_XSDs_Click_Thru_2.0.zip
+    httpStatus: 200
+    fetched: '2026-07-27'
+    parses: true
+    note: 115 top-level declarations. First-party.
+  - title: Green Button API Documentation (Green Button Alliance)
+    version: 1.0.0
+    format: OpenAPI 3.0.0
+    paths: 7
+    saved: openapi/green-button-alliance-espi-openapi.json
+    sourceURL: https://raw.githubusercontent.com/GreenButtonAlliance/OpenAPI-Green-Button-Documentation/main/green-button-openapi.json
+    httpStatus: 200
+    fetched: '2026-07-27'
+    parses: true
+    firstParty: false
+    declaredServer: https://sandbox.greenbuttonalliance.org:8443/DataCustodian
+    note: >-
+      NOT PG&E's. This is the Green Button Alliance's own OpenAPI description of
+      the ESPI CMD API — the standard contract PG&E implements — harvested
+      verbatim with only an x-provenance / x-source-url / x-harvested /
+      x-harvest-http-status / x-not-a-pge-host block added to info. Its declared
+      server is the GBA public sandbox, not a PG&E host. It is included for the
+      same reason the Australian profiles carry the Data Standards Body
+      specifications: the standard supplies the contract. PG&E's production ESPI
+      resources are richer than these seven paths and are enumerated in PG&E's
+      own Supported-APIs.pdf.
+  noFirstPartyOpenAPI: >-
+    PG&E publishes no OpenAPI, Swagger, Postman collection, GraphQL schema or
+    AsyncAPI document. /openapi.json and /swagger.json return HTTP 404 on
+    www.pge.com and on sharemydata.pge.com. Its machine-readable contract is
+    XSD, and its API reference is PDF. This is the one real gap in an otherwise
+    strong developer surface.
+  otherStandardsFound: >-
+    None. No CDR Consumer Data Standards (not applicable outside Australia), no
+    OpenADR, no IEEE 2030.5, no OCPP or OCPI despite PG&E's EV programmes, and
+    no IEC CIM 61968/61970 reference on any probed PG&E surface. Demand response
+    program enrollment is exposed through ESPI-shaped Batch resources
+    (BulkRetailDRPrgInfo / RetailDRPrgInfo), not through OpenADR.
+
+documentedEndpoints:
+  source: >-
+    PG&E "Supported APIs" reference PDF, HTTP 200, fetched 2026-07-27 from
+    https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf,
+    corroborated against the endpoint URLs printed in the body of
+    https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html.
+    Production prefix declared in the PDF as https://api.pge.com/GreenButtonConnect.
+    Reproduced here verbatim from PG&E's own documents; NOT invented and NOT
+    inferred from probing.
+  oauth:
+  - GET  https://api.pge.com/datacustodian/oauth/v2/authorize
+  - POST https://api.pge.com/datacustodian/oauth/v2/token
+  - GET  https://api.pge.com/datacustodian/test/oauth/v2/authorize
+  - POST https://api.pge.com/datacustodian/test/oauth/v2/token
+  espiSynchronous:
+  - GET .../espi/1_1/resource/DownloadSampleData
+  - GET .../espi/1_1/resource/ReadServiceStatus
+  - GET .../espi/1_1/resource/ApplicationInformation/{ApplicationInformationID}
+  - GET .../espi/1_1/resource/Authorization
+  - GET .../espi/1_1/resource/Authorization/{AuthorizationID}
+  - DELETE .../espi/1_1/resource/Authorization/{AuthorizationID}
+  - GET .../espi/1_1/resource/LocalTimeParameters
+  - GET .../espi/1_1/resource/LocalTimeParameters/{LocalTimeParametersID}
+  - GET .../espi/1_1/resource/ReadingType
+  - GET .../espi/1_1/resource/ReadingType/{ReadingTypeID}
+  - GET .../espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint
+  - GET .../espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}
+  - GET .../espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/MeterReading
+  - GET .../espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/MeterReading/{MeterReadingID}
+  - GET .../espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/MeterReading/{MeterReadingID}/IntervalBlock
+  - GET .../espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/MeterReading/{MeterReadingID}/IntervalBlock/{IntervalBlockID}
+  - GET .../espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/UsageSummary
+  - GET .../espi/1_1/resource/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}/UsageSummary/{UsageSummaryID}
+  espiAsynchronousBatch:
+  - GET .../espi/1_1/resource/Batch/Bulk/{BulkID}
+  - GET .../espi/1_1/resource/Batch/Subscription/{SubscriptionID}
+  - GET .../espi/1_1/resource/Batch/Subscription/{SubscriptionID}/UsagePoint/{UsagePointID}
+  - GET .../espi/1_1/resource/Batch/BulkRetailCustomerInfo/{BulkID}
+  - GET .../espi/1_1/resource/Batch/RetailCustomer/{RetailCustomerID}
+  - GET .../espi/1_1/resource/Batch/BulkRetailDRPrgInfo/{BulkID}
+  - GET .../espi/1_1/resource/Batch/RetailDRPrgInfo/{RetailCustomerID}
+  queryParameters: >-
+    published-min / published-max and updated-min / updated-max (Zulu time only;
+    PG&E states other date formats are not supported) and correlationID on the
+    asynchronous Batch resources.
+  asynchronousDelivery: >-
+    Batch requests are acknowledged and the result is announced to the third
+    party's registered Notification URI, supplied at registration. The
+    notification body carries an ns0:BatchList with an ns0:resources element
+    containing the retrieval URL, per the naesb.org/espi namespace. PG&E
+    publishes no AsyncAPI for this callback.
+  tokenClassesPerResource: >-
+    registration_access_token for ApplicationInformation; client_access_token
+    for DownloadSampleData, ReadServiceStatus, Authorization feed/detail and the
+    Bulk-level Batch resources; per-customer access_token for LocalTimeParameters,
+    ReadingType, the Subscription trees and the customer-level Batch resources.
+
+consumerVsMarketData:
+  consumerDataAPI: true
+  consumerDataDetail: >-
+    Yes, and it is the real thing rather than a described service. A third party
+    can obtain an individual PG&E customer's electric and gas interval usage,
+    usage summaries, billing and account information, current and historical
+    billed service tariff and rate plan (including Medical Baseline, CARE, FERA,
+    TBS, CCA_TBS and Solar Choice options), customer class indicator (RES, AGR,
+    COM/IND, Other), meter read cycle and demand response program enrollment,
+    through a documented ESPI REST API, in standardised Green Button XML, under
+    that customer's OAuth authorization. PG&E publishes the base URL, the
+    resource list, the verbs, the token class per resource, the query
+    parameters, the scope string format, the schemas and the rate limits. It is
+    consent-gated (the customer authorises on PG&E's site and chooses the data
+    groups and period) and approval-gated (the third party must be registered
+    and approved first), which is correct, but it is unambiguously an API.
+  marketDataOpen: false
+  marketDataDetail: >-
+    No. PG&E publishes no open grid, market or system API and no anonymous
+    machine-readable feed. data.pge.com, opendata.pge.com, apims.pge.com and
+    ecomapdata.pge.com do not resolve. www.pge.com/data is a vanity redirect to
+    the Share My Data consumer page, not a data portal. The nearest thing is the
+    Energy Data Request Program at https://pge-energydatarequest.com (HTTP 200),
+    run under CPUC Decision 14-05-016, which offers quarterly aggregated
+    Electric Usage by ZIP Code and Gas Usage by ZIP Code datasets from 2013
+    through 2026 Q2 as CSV files inside ZIP archives. Those are NOT open: the
+    download handler at /public_datasets/nojs?type=electric&file=... returns
+    HTTP 200 with content-type text/html, serving an "Organization Information"
+    form that requires Organization, Name and Email plus an agreement
+    acknowledging that the data is subject to CPUC Decision 14-05-016 — a
+    licence-gated bulk file download, not an API. Custom EDRP datasets require
+    an application, eligibility as an academic researcher with IRB
+    certification, a state or federal agency, or a local government, and a
+    tiered security review. California wholesale market and system data belongs
+    to CAISO, not to PG&E.
+  theSplit: >-
+    The finding for the United States. PG&E is wide open on the DOCUMENTATION of
+    consumer data and closed on the DATA on both sides. Anyone can read the
+    complete Share My Data contract, download the schemas and the SDKs and study
+    the OAuth flow anonymously — better than most US banks and far better than
+    the Ontario LDCs — but nobody gets a byte of usage data without CPUC
+    standing, a commercial certificate, registration testing, approval and an
+    individual customer's consent. Meanwhile the open-data side that a European
+    DNO or the UK's NESO would publish simply does not exist here, because a US
+    investor-owned distribution utility is not the party that produces market
+    data. Open contract, closed data, absent market feed.
+
+accessGate:
+  gate: application-approval
+  gated: true
+  selfServeDocumentation: true
+  selfServeAccess: false
+  whatADeveloperMustActuallyDo: >-
+    1. Read the whole contract first, free and anonymously, at
+    https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+    — this is the unusual part and it genuinely works. 2. Obtain a valid TLS 1.2
+    X.509 certificate from a recognised public certificate authority, with an
+    unexpired, unrevoked RSA key of at least 2048 bits. PG&E states plainly that
+    self-signed certificates are not accepted and will delay approval. 3.
+    Register at https://sharemydata.pge.com/ with a 9-digit US Employer
+    Identification Number (Tax ID), business and technical contacts, redirect
+    URIs for the OAuth flow, and a Notification URI for asynchronous batch
+    results. 4. Be screened: PG&E verifies the applicant is a legitimate
+    business entity in good standing with the California Public Utilities
+    Commission, which PG&E describes as "the ultimate governing authority on who
+    is not eligible to receive authorized customer data". 5. Accept the Share My
+    Data Platform Terms of Use, the Customer Data Access Tariff and the Customer
+    Data Privacy and Protection Rules. 6. Complete mandatory testing against the
+    published test environment at https://api.pge.com/datacustodian/test/oauth/v2/
+    — an API connectivity test, an OAuth test and an ApplicationInformation
+    resource request — within 90 days, or the registration expires. 7. Download
+    PG&E's own Entrust SSL certificate from the third-party portal under Manage
+    Registration, for the mutual TLS handshake. 8. Receive approval and the
+    production client_id / client_secret pair and BulkID. 9. Only then can an
+    individual PG&E customer authorise you, choosing the data groups
+    (Usage, Billing, Basic, Account, ProgramEnrollment), interval duration and
+    period. There is no accreditation body in the Australian CDR sense — the
+    CPUC sets eligibility but PG&E performs the approval. There is no free tier
+    and no anonymous sandbox key.
+  notSelfServe: >-
+    Recorded explicitly to avoid a common misreading. The documentation is
+    self-serve; the API is not. https://sharemydata.pge.com/ returns HTTP 200
+    but is a vendor sign-in and registration wall, and a deliberately invented
+    path on that host returned HTTP 404 rather than a redirect, so the 200 on
+    the root is a real page and not a catch-all.
+  rateLimits: >-
+    Published, which is rare for a utility. One request per second per vendor
+    across all of that vendor's client IDs; 2,000 API calls per hour per client
+    ID; 20,000 API calls per 24-hour period per client ID, with the daily
+    threshold resetting at 5 p.m. Pacific Time.
+
+authModel:
+  scheme: >-
+    OAuth 2.0 (authorization_code and client_credentials grants, with
+    refresh_token) layered on mandatory mutual TLS 1.2 with client X.509
+    certificates. Not OpenID Connect.
+  verifiedOnPGE: true
+  verificationDetail: >-
+    Verified anonymously on 2026-07-27. GET https://api.pge.com/datacustodian/oauth/v2/token
+    returned HTTP 405 with {"error":"invalid_request","error_description":"GET
+    not permitted"}; GET https://api.pge.com/datacustodian returned HTTP 400
+    with {"error":"invalid_request","error_description":"Missing grant_type"};
+    both carried server: Mulesoft-API-Gateway. Every ESPI resource path returned
+    HTTP 400 "Invalid Certificate", which is the mutual-TLS layer rejecting a
+    client with no certificate. PG&E's own words: "Data requests and responses
+    are made using the HTTPS protocol and are authenticated via a two-way
+    certificate exchange with PG&E" and "With the exception of browser redirects
+    during OAuth 2.0, all other requests between you and PG&E are over mutual
+    SSL and require that you attach your client SSL certificate to your request."
+  openidConnect:
+    served: false
+    detail: >-
+      https://www.pge.com/.well-known/openid-configuration returned HTTP 404,
+      https://api.pge.com/.well-known/openid-configuration returned HTTP 404 and
+      https://sharemydata.pge.com/.well-known/openid-configuration returned HTTP
+      404. No discovery document is served anywhere. This is plain OAuth 2.0.
+  scopes: >-
+    ESPI function-block scope strings rather than named OAuth scopes. PG&E's own
+    documented example of an authorized scope parameter is:
+    FB=1_3_8_13_14_18_19_31_32_35_37_38_39_40_4_5_10_15_16_46_47;AdditionalScope=Usage_Billing_Basic_Account_ProgramEnrollment;IntervalDuration=900_3600;BlockDuration=Daily;HistoryLength={3P Registered historical length};AccountCollection={count of authorized accounts}.
+    The mapping is published at
+    https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf
+    (HTTP 200). Function blocks referenced in the Supported-APIs document
+    include FB_3 (Core Green Button Connect My Data), FB_14, FB_32 (Resource
+    Level REST), FB_35, FB_46 and FB_47.
+  customerFacingAuth: >-
+    The customer authenticates on PG&E's own site during the authorization-code
+    flow and selects data groups and authorization period (defined period or
+    Indefinite). A customer can cancel, and a third party can revoke via HTTP
+    DELETE on the Authorization resource.
+
+probes:
+  date: '2026-07-27'
+  method: >-
+    Anonymous curl with a browser user agent, HTTP status and redirect target
+    recorded for every URL, plus WebFetch for page content. Invented control
+    paths were probed on api.pge.com and on sharemydata.pge.com BEFORE trusting
+    any status code, specifically to rule out catch-all behaviour.
+  controlProbes:
+  - url: https://api.pge.com/bogus-control-xyz123
+    httpStatus: 404
+    body: 'No listener for endpoint: /bogus-control-xyz123'
+    finding: CONTROL. The gateway 404s invented top-level paths in plain text.
+  - url: https://api.pge.com/GreenButtonConnect/bogus-xyz
+    httpStatus: 404
+    finding: CONTROL. Invented path under a real prefix still 404s.
+  - url: https://api.pge.com/BogusListenerXyz/espi/1_1/resource/ApplicationInformation
+    httpStatus: 404
+    finding: CONTROL. Real-looking ESPI path under an invented prefix 404s.
+  - url: https://api.pge.com/bogusprefix/espi/1_1/resource/UsagePoint
+    httpStatus: 404
+    finding: CONTROL. Same.
+  - url: https://sharemydata.pge.com/this-path-does-not-exist-xyz123
+    httpStatus: 404
+    finding: CONTROL. The portal host is not a catch-all either.
+  results:
+  - url: https://www.pge.com/
+    httpStatus: 200
+  - url: https://api.pge.com/
+    httpStatus: 404
+    note: Gateway root has no listener. Expected.
+  - url: https://api.pge.com/datacustodian
+    httpStatus: 400
+    note: '{"error":"invalid_request","error_description":"Missing grant_type"} — real OAuth server.'
+  - url: https://api.pge.com/datacustodian/oauth/v2/token
+    httpStatus: 405
+    note: '{"error":"invalid_request","error_description":"GET not permitted"} — POST-only token endpoint. server: Mulesoft-API-Gateway.'
+  - url: https://api.pge.com/datacustodian/oauth/v2/authorize
+    httpStatus: 400
+  - url: https://api.pge.com/datacustodian/test/oauth/v2/token
+    httpStatus: 400
+    note: Published test/sandbox authorization server; same OAuth error shape.
+  - url: https://api.pge.com/datacustodian/test/oauth/v2/authorize
+    httpStatus: 400
+  - url: https://api.pge.com/GreenButtonConnect/espi/1_1/resource/ApplicationInformation
+    httpStatus: 400
+    note: '"Invalid Certificate" — live mutual-TLS listener. CONFIRMED real by the control probes above.'
+  - url: https://api.pge.com/GreenButtonConnect/espi/1_1/resource/Authorization
+    httpStatus: 400
+    note: '"Invalid Certificate".'
+  - url: https://api.pge.com/GreenButtonConnect/espi/1_1/resource/UsagePoint
+    httpStatus: 400
+    note: '"Invalid Certificate".'
+  - url: https://api.pge.com/GreenButtonConnect/espi/1_1/resource/Batch/Bulk/1
+    httpStatus: 400
+    note: '"Invalid Certificate".'
+  - url: https://api.pge.com/GreenButtonConnect/espi/1_1/resource/ReadServiceStatus
+    httpStatus: 400
+    note: '"Invalid Certificate".'
+  - url: https://api.pge.com/GreenButtonConnect/espi/1_1/resource/DownloadSampleData
+    httpStatus: 400
+    note: '"Invalid Certificate".'
+  - url: https://api.pge.com/.well-known/openid-configuration
+    httpStatus: 404
+  - url: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+    httpStatus: 200
+    note: >-
+      THE DEVELOPER PORTAL. Anonymous, no login. Registration prerequisites,
+      testing steps, OAuth flow, endpoint URLs, scope strings, rate limits, FAQ,
+      release notes, and every downloadable artifact below.
+  - url: https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html
+    httpStatus: 200
+    note: Consumer/business-facing Share My Data overview and eligibility.
+  - url: https://sharemydata.pge.com/
+    httpStatus: 200
+    note: Third-party registration and vendor sign-in. Not a developer portal.
+  - url: https://sharemydata.pge.com/openapi.json
+    httpStatus: 404
+  - url: https://sharemydata.pge.com/swagger.json
+    httpStatus: 404
+  - url: https://sharemydata.pge.com/.well-known/openid-configuration
+    httpStatus: 404
+  - url: https://sharemydataqa.pge.com/
+    httpStatus: 000
+    note: >-
+      Named in PG&E release notes as the QA host for the
+      dataCustodianScopeSelectionScreenURI. DNS does not resolve publicly.
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+    httpStatus: 200
+    note: The authoritative API reference. Endpoint table parsed and reproduced above.
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs-Click-Thru-2.0.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs-SMD-Click-Thru-1.0.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/OAuth_Authorization_ESPI.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Data-Elements.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Relational-Data-Model.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Process-Flow.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ESPI-Data-Model-SMD-Click-Thru-1.0.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ESPI_XSDs.zip
+    httpStatus: 200
+    note: 'atom.xsd, espiDerived.20180821.xsd, retailcustomer.20180802.xsd. Extracted to schemas/; all parse as XML Schema.'
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/SMD_XSDs.zip
+    httpStatus: 200
+    note: Byte-identical to ESPI_XSDs.zip (same 50,187 bytes, same three members). Not duplicated in schemas/.
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/SMD_XSDs_Click_Thru_2.0.zip
+    httpStatus: 200
+    note: 'Older generation: espiDerived.20180315.xsd, retailcustomer.20180315.xsd. Extracted to schemas/.'
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip
+    httpStatus: 200
+    note: 278,579-byte worked MeterReadings_Example.xml. Linked, not vendored.
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/pythonsdk.zip
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/javascriptsdk.zip
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-python-development-guide.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-javascript-development-guide.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf
+    httpStatus: 200
+  - url: https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf
+    httpStatus: 200
+    note: >-
+      The filed tariff. Text extracted: "Revised Cal. P.U.C. Sheet No. 55826-E
+      Cancelling Revised Cal. P.U.C. Sheet No. 48664-E, Electric Sample Form No.
+      79-1186, Customer Information Service Request For Share My Data (CISR-SMD),
+      Advice 6900-E, Submitted March 30, 2023, Effective April 1, 2023."
+  - url: http://docs.cpuc.ca.gov/PublishedDocs/PUBLISHED/Graphics/140370.PDF
+    httpStatus: 200
+    note: >-
+      Linked from PG&E's third-party page. Text extracted: California Senate
+      Bill No. 1476, Chapter 497 (Padilla), adding Chapter 5 commencing with
+      Section 8380 to Division 4.1 of the Public Utilities Code, approved 29
+      September 2010 — the statutory basis for customer energy data privacy and
+      access in California.
+  - url: https://pge-energydatarequest.com/
+    httpStatus: 200
+    note: Energy Data Request Program portal, run under CPUC Decision 14-05-016.
+  - url: https://pge-energydatarequest.com/public_datasets
+    httpStatus: 200
+    note: Quarterly aggregated Electric and Gas Usage by ZIP Code, 2013 through 2026 Q2, CSV in ZIP.
+  - url: https://pge-energydatarequest.com/public_datasets/nojs?type=electric&file=PGE_2013_Q1_ElectricUsageByZip.zip
+    httpStatus: 200
+    contentType: text/html
+    note: >-
+      DECISIVE for market_data_open. Returns an HTML "Organization Information"
+      form requiring Organization, Name, Email and agreement to CPUC D.14-05-016
+      terms — NOT the ZIP. The public datasets are licence-gated downloads, not
+      an open feed.
+  - url: https://developer.pge.com
+    httpStatus: 000
+    note: DNS does not resolve.
+  - url: https://developers.pge.com
+    httpStatus: 000
+    note: DNS does not resolve.
+  - url: https://docs.pge.com
+    httpStatus: 000
+    note: DNS does not resolve.
+  - url: https://data.pge.com
+    httpStatus: 000
+    note: DNS does not resolve.
+  - url: https://opendata.pge.com
+    httpStatus: 000
+    note: DNS does not resolve.
+  - url: https://www.pge.com/developers
+    httpStatus: 302
+    location: https://www.pge.com/en/account/service-requests/building-and-renovation.html?vnt=developers
+    note: >-
+      TRAP. The /developers vanity URL is for property developers and builders,
+      not software developers. It resolves to a Building and Renovation page
+      with no APIs. Recorded so it is never mistaken for a developer portal.
+  - url: https://www.pge.com/data
+    httpStatus: 302
+    location: https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html?vnt=data
+  - url: https://www.pge.com/api
+    httpStatus: 404
+  - url: https://www.pge.com/docs
+    httpStatus: 404
+  - url: https://www.pge.com/openapi.json
+    httpStatus: 404
+  - url: https://www.pge.com/swagger.json
+    httpStatus: 404
+  - url: https://www.pge.com/.well-known/security.txt
+    httpStatus: 404
+  - url: https://www.pge.com/en/about/company-information/company-profile.html
+    httpStatus: 200
+  - url: https://www.pge.com/en/about/company-information/vulnerability-disclosure-policy.html
+    httpStatus: 200
+  - url: https://github.com/pgetech
+    httpStatus: 200
+    note: >-
+      PG&E's GitHub organisation, named "Pacific Gas and Electric", created
+      2018-08-15, 538 followers, 0 public repositories. Real but empty.
+      Confirmed via https://api.github.com/orgs/pgetech (HTTP 200).
+  - url: https://www.greenbuttonalliance.org/
+    httpStatus: 200
+    note: Names no state mandate, no CPUC, no PG&E.
+  - url: https://www.greenbuttonalliance.org/certification
+    httpStatus: 301
+  - url: https://raw.githubusercontent.com/GreenButtonAlliance/OpenAPI-Green-Button-Documentation/main/green-button-openapi.json
+    httpStatus: 200
+    note: The one OpenAPI harvested. Parses as OpenAPI 3.0.0, 7 paths. NOT PG&E's.
+
+findings:
+  summary: >-
+    Pacific Gas and Electric is the United States counter-example that the
+    energy study needs. The central claim under test is that a mandate is not an
+    implementation; PG&E demonstrates the converse just as sharply — an
+    implementation can exist without the mandate that would supposedly produce
+    it. There is no US federal energy consumer data right. Green Button at
+    national level is a voluntary NAESB/NIST standard that began, in PG&E's own
+    words, as "a challenge by the White House to utility companies". What
+    compelled PG&E was Californian and specific: Public Utilities Code section
+    8380 from SB 1476 (2010), a CPUC-filed Customer Data Access Tariff (Sample
+    Form 79-1186, effective 1 April 2023), Electric Rule 24 and Gas Rule 25 for
+    demand response providers, and CPUC Decision 14-05-016 for aggregated data.
+    That is a real obligation, but a state one, which is why the regime is
+    recorded as `other` rather than green-button-voluntary — calling it
+    voluntary would be false, and calling it none would be false too. The status
+    is live-implemented and it was proved rather than accepted: a MuleSoft
+    gateway at api.pge.com distinguishes real listeners from invented ones,
+    returns RFC 6749 OAuth errors on the token endpoint, and returns "Invalid
+    Certificate" on every ESPI resource path because production traffic requires
+    mutual TLS with a commercially issued client certificate. Around that
+    endpoint sits something no Ontario LDC and few US utilities have: a complete,
+    anonymous, login-free developer contract — a supported-API table with verbs,
+    token classes and function-block mappings, an OAuth/ESPI authorization
+    guide, XSD schemas in two generations, a worked 278KB sample payload, Python
+    and JavaScript SDKs with development guides, a SoapUI walkthrough, published
+    rate limits and dated release notes. The gap is that none of it is an
+    OpenAPI; PG&E's machine-readable contract is XSD and its reference is PDF,
+    which is a 2013 developer experience shipped competently rather than a 2026
+    one. And the openness stops at the documentation. Getting data requires a US
+    EIN, CPUC standing, a public-CA X.509 certificate, tariff acceptance,
+    ninety-day registration testing and PG&E approval, then a customer's
+    consent. On the market side there is nothing: no open grid or system API at
+    all, and the aggregated ZIP-code datasets sit behind an organisation form
+    and a data-use agreement. Open contract, gated consumer data, absent market
+    data — the American shape.
+  apisListed: 2
+  apisListedNote: >-
+    Two APIs are listed, both real, both documented by PG&E, both probed live:
+    the Share My Data ESPI resource API and the Share My Data OAuth 2.0
+    authorization API. They are listed separately because PG&E documents them
+    separately, they sit on different base paths (/GreenButtonConnect versus
+    /datacustodian), they use different security (mutual TLS plus bearer versus
+    OAuth grants with certificate on the token call), and PG&E's own reference
+    explicitly notes that "OAuth URLs are not prefixed with
+    https://api.pge.com/GreenButtonConnect". The Energy Data Request Program is
+    NOT listed as an API because it is a web form serving ZIP files, not an API.
+    Download-my-data style bill downloads from the customer account are not
+    listed either.
+  noFabrication: >-
+    No endpoint, host, scope, function block or specification was invented.
+    Every URL in this file carries the HTTP status observed on 2026-07-27. The
+    endpoint inventory under documentedEndpoints was read out of PG&E's own
+    published Supported-APIs.pdf and corroborated against endpoint URLs printed
+    in the body of PG&E's third-party developer page — it is not the result of
+    path guessing. Control probes were run first, and their results are recorded
+    above, so that every non-404 response on api.pge.com is interpretable.
+    Nothing was saved to openapi/ or schemas/ that was not fetched at HTTP 200,
+    and the single OpenAPI document is labelled in its own info block as the
+    Green Button Alliance's, not PG&E's.
+  duplicateRepoNote: >-
+    Three earlier api-evangelist repos cover the same organisation under
+    different slugs — all/pg-and-e, all/pgande and all/pgande-corp. They were
+    produced by the generic enrichment pipeline, not by this seam review, and
+    all/pgande and all/pgande-corp carry empty apis[] arrays. This repo (pge) is
+    the researched profile. The duplicates should be reconciled under the
+    duplicate-provider-retirement procedure.
+
+sources:
+- url: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  type: Documentation
+  note: >-
+    The real developer portal. Anonymous, login-free, complete: registration
+    prerequisites, OAuth 2.0 flow with request/response examples, endpoint URLs,
+    scope string format, rate limits, notification model, release notes and
+    every downloadable artifact.
+- url: https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html
+  type: Documentation
+  note: Share My Data overview, eligibility, White House origin statement, third-party requirements.
+- url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+  type: APIReference
+  note: Authoritative endpoint table — phase, category, level of data, sync/async, verb, query parameters, URL, required token, description, ESPI function block.
+- url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/OAuth_Authorization_ESPI.pdf
+  type: Documentation
+  note: NAESB ESPI OAuth 2.0 authorization guide.
+- url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf
+  type: Documentation
+  note: Function-block to scope-string mapping — PG&E's answer to an OAuth scope list.
+- url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ESPI_XSDs.zip
+  type: XSD
+  note: Source of three of the five first-party schemas saved under schemas/.
+- url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/SMD_XSDs_Click_Thru_2.0.zip
+  type: XSD
+  note: Source of the two Click-Thru 2.0 schemas saved under schemas/.
+- url: https://sharemydata.pge.com/
+  type: Registration
+  note: Third-party registration and approved-vendor sign-in. The gate.
+- url: https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf
+  type: Reference
+  note: The CPUC-filed Customer Information Service Request for Share My Data tariff form.
+- url: http://docs.cpuc.ca.gov/PublishedDocs/PUBLISHED/Graphics/140370.PDF
+  type: Reference
+  note: California SB 1476 (2010), Public Utilities Code section 8380 — the statutory floor.
+- url: https://pge-energydatarequest.com/
+  type: Reference
+  note: Energy Data Request Program under CPUC D.14-05-016 — aggregated ZIP-code datasets, form-gated.
+- url: https://www.greenbuttondata.org/
+  type: Reference
+  note: The Green Button rules and standards PG&E says Share My Data follows.
+- url: http://naesb.org/espi
+  type: Reference
+  note: NAESB REQ.21 ESPI, the standard behind the API and the XML namespace in batch notifications.
+- url: https://github.com/GreenButtonAlliance/OpenAPI-Green-Button-Documentation
+  type: OpenAPI
+  note: Source of the single harvested OpenAPI document. Not PG&E's.

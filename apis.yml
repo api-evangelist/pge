@@ -1,0 +1,218 @@
+aid: pge
+url: https://raw.githubusercontent.com/api-evangelist/pge/refs/heads/main/apis.yml
+name: Pacific Gas and Electric
+kind: company
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Energy
+- United States
+- Utilities
+- Electricity
+- Gas
+- California
+- Smart Metering
+- Green Button
+- ESPI
+- Energy Data
+- Grid
+- Demand Response
+- Investor-Owned Utility
+created: '2026-07-27'
+modified: '2026-07-27'
+specificationVersion: '0.19'
+description: >-
+  Pacific Gas and Electric Company is the investor-owned electric and natural
+  gas utility for northern and central California — incorporated in California
+  in 1905, headquartered in Oakland, roughly 23,000 employees, a 70,000-square-
+  mile service area, about 5.5 million electric accounts and 4.5 million gas
+  accounts, and a subsidiary of PG&E Corporation. It sits in the wires, pipes
+  and metering layer of the United States value chain: a vertically integrated
+  regulated distribution utility that owns the meter and the customer
+  relationship, does not run the wholesale market (CAISO does), and is regulated
+  by the California Public Utilities Commission. Its API posture is the outlier
+  of the American utility sector and deserves to be recorded precisely, because
+  the United States has no federal energy consumer-data mandate at all. PG&E
+  runs Share My Data, its production Green Button Connect My Data
+  implementation, on a live MuleSoft API gateway at https://api.pge.com — a
+  NAESB REQ.21 ESPI 1.1 surface with roughly two dozen documented resources
+  under /GreenButtonConnect/espi/1_1/resource/, an OAuth 2.0 authorization
+  server at /datacustodian/oauth/v2/, and a separate published test environment
+  at /datacustodian/test/oauth/v2/. Unlike almost every other US utility, PG&E
+  publishes the whole contract anonymously: a complete supported-API reference,
+  an OAuth/ESPI authorization guide, a relational data model, supported data
+  elements, function-block scope-string mappings, the ESPI and Share My Data XSD
+  schemas, sample MeterReadings XML, Python and JavaScript SDKs with development
+  guides, published rate limits (one request per second per vendor, 2,000 calls
+  per hour and 20,000 calls per 24 hours per client ID) and a SoapUI walkthrough
+  — all reachable without a login at pge.com. What is not open is the data
+  itself. Share My Data is application-approval gated: a third party needs a US
+  EIN, eligible standing with the CPUC, a CA-issued TLS 1.2 X.509 certificate
+  (self-signed rejected), acceptance of the CPUC-filed Customer Data Access
+  Tariff, and successful connectivity and OAuth testing before approval, after
+  which every production call runs over mutual TLS with bearer tokens scoped to
+  an individual customer's authorization. The mandate story is equally specific
+  and must not be flattened into "voluntary Green Button": California compels
+  third-party access through state law and CPUC tariff — Public Utilities Code
+  section 8380 (SB 1476, 2010), the Customer Information Service Request for
+  Share My Data tariff form (Cal. P.U.C. Sheet 55826-E, Sample Form 79-1186,
+  Advice 6900-E, effective 1 April 2023), and Electric Rule 24 / Gas Rule 25 for
+  demand response providers — but no federal obligation and no Ontario-style
+  Green Button regulation applies. The consumer-versus-market split is stark:
+  consumer data is a real, verified, standards-conformant API behind consent and
+  approval, while PG&E publishes no open market or grid API whatsoever. Its
+  aggregated ZIP-code electric and gas usage datasets, released quarterly under
+  CPUC Decision 14-05-016 through the Energy Data Request Program, are CSV-in-
+  ZIP downloads behind an organization/name/email form and a data-use agreement,
+  not an anonymous feed; California wholesale market data belongs to CAISO.
+apis:
+- aid: pge:pge-share-my-data-espi-api
+  name: PG&E Share My Data (Green Button Connect My Data) ESPI API
+  description: >-
+    PG&E's production Green Button Connect My Data implementation, branded Share
+    My Data. A NAESB REQ.21 Energy Services Provider Interface (ESPI) 1.1 REST
+    API returning Green Button Atom/XML, serving customer-authorized electric
+    and gas interval usage, usage summaries, reading types, billing and account
+    information, service tariff and rate-plan detail, and demand response
+    program enrollment. PG&E's own Supported-APIs reference enumerates the
+    resource set: DownloadSampleData, ReadServiceStatus, ApplicationInformation,
+    Authorization (feed, single, and DELETE revocation), LocalTimeParameters,
+    ReadingType, Subscription UsagePoint / MeterReading / IntervalBlock /
+    UsageSummary trees, and the asynchronous Batch family — Batch/Bulk/{BulkID},
+    Batch/Subscription/{SubscriptionID}, Batch/BulkRetailCustomerInfo/{BulkID},
+    Batch/RetailCustomer/{RetailCustomerID}, Batch/BulkRetailDRPrgInfo/{BulkID}
+    and Batch/RetailDRPrgInfo/{RetailCustomerID}. Asynchronous results are
+    announced to a third party's registered notification URI. Every production
+    request runs over mutual (two-way) TLS 1.2 with the third party's X.509
+    client certificate attached, plus a bearer token — client_access_token for
+    third-party-level resources, per-customer access_token for subscription
+    resources, registration_access_token for ApplicationInformation. Verified
+    live anonymously on 2026-07-27: the ESPI resource paths answer HTTP 400
+    "Invalid Certificate" from a Mulesoft-API-Gateway while invented sibling
+    paths answer HTTP 404 "No listener for endpoint", which distinguishes a real
+    mTLS-protected listener from a catch-all. Access is application-approval
+    gated; not self-serve.
+  humanURL: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  baseURL: https://api.pge.com/GreenButtonConnect/espi/1_1/resource
+  tags:
+  - Green Button
+  - ESPI
+  - Energy Data
+  - Smart Metering
+  - Electricity
+  - Gas
+  - Demand Response
+  properties:
+  - type: Documentation
+    url: https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html
+  - type: APIReference
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+  - type: APIReference
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs-Click-Thru-2.0.pdf
+  - type: Documentation
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Data-Elements.pdf
+  - type: Documentation
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Relational-Data-Model.pdf
+  - type: Documentation
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Process-Flow.pdf
+  - type: XSD
+    url: schemas/pge-share-my-data-atom.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-espiDerived-20180821.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-retailcustomer-20180802.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-espiDerived-20180315.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-retailcustomer-20180315.xsd
+  - type: OpenAPI
+    url: openapi/green-button-alliance-espi-openapi.json
+  - type: Example
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip
+  - type: SDK
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/pythonsdk.zip
+  - type: SDK
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/javascriptsdk.zip
+  - type: Documentation
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-python-development-guide.pdf
+  - type: Documentation
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-javascript-development-guide.pdf
+  - type: Documentation
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
+  - type: TermsOfService
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf
+  - type: Registration
+    url: https://sharemydata.pge.com/
+  - type: Reference
+    url: https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf
+- aid: pge:pge-share-my-data-oauth-api
+  name: PG&E Share My Data OAuth 2.0 Authorization API
+  description: >-
+    The OAuth 2.0 authorization server behind Share My Data, implemented to meet
+    the NAESB ESPI authorization profile. Two token classes are issued
+    separately: a client access token via the client_credentials grant for
+    third-party-level resources, and a per-customer access/refresh token pair
+    via the authorization_code grant after a PG&E customer authenticates on
+    PG&E's site and selects what to share. Authorized scope is returned as an
+    ESPI function-block string (for example
+    FB=1_3_8_13_14_18_19_31_32_35_37_38_39_40_4_5_10_15_16_46_47 with
+    AdditionalScope, IntervalDuration, BlockDuration, HistoryLength and
+    AccountCollection parameters), documented in PG&E's supported function-block
+    scope-string mapping. PG&E publishes both a production authorization server
+    at /datacustodian/oauth/v2/ and a separate test authorization server at
+    /datacustodian/test/oauth/v2/ used during mandatory registration testing.
+    Verified live anonymously on 2026-07-27: GET on the token endpoint returns
+    HTTP 405 {"error":"invalid_request","error_description":"GET not
+    permitted"}, and an unparameterised request returns HTTP 400
+    {"error":"invalid_request","error_description":"Missing grant_type"} — real
+    RFC 6749 error responses from a Mulesoft-API-Gateway. Except for the browser
+    redirects in the authorization-code flow, every call must carry the third
+    party's client SSL certificate over mutual TLS. No
+    /.well-known/openid-configuration is served (HTTP 404 on both www.pge.com
+    and api.pge.com); this is OAuth 2.0, not OpenID Connect.
+  humanURL: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  baseURL: https://api.pge.com/datacustodian/oauth/v2
+  tags:
+  - OAuth
+  - Authorization
+  - Green Button
+  - ESPI
+  - Security
+  properties:
+  - type: Documentation
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/OAuth_Authorization_ESPI.pdf
+  - type: Documentation
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf
+  - type: APIReference
+    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+  - type: Documentation
+    url: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  - type: Registration
+    url: https://sharemydata.pge.com/
+  - type: Reference
+    url: http://naesb.org/espi
+common:
+- type: Website
+  url: https://www.pge.com/
+- type: Documentation
+  url: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+- type: Registration
+  url: https://sharemydata.pge.com/
+- type: GitHubOrganization
+  url: https://github.com/pgetech
+- type: LinkedIn
+  url: https://www.linkedin.com/company/pacificgasandelectric
+- type: Blog
+  url: https://www.pge.com/en/newsroom/currents.html
+- type: VulnerabilityDisclosure
+  url: https://www.pge.com/en/about/company-information/vulnerability-disclosure-policy.html
+- type: Privacy
+  url: https://www.pge.com/en/privacy-center.html
+- type: About
+  url: https://www.pge.com/en/about/company-information/company-profile.html
+- type: Reference
+  url: https://pge-energydatarequest.com/
+- type: Reference
+  url: https://www.greenbuttondata.org/
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
