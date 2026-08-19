@@ -1,0 +1,420 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Green Button API Documentation",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "https://sandbox.greenbuttonalliance.org:8443/oauth/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "ApplicationInformation",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve all Application Information [FB_33]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.greenbuttonalliance.org:8443/DataCustodian/espi/1_1/resource/ApplicationInformation",
+            "params": [
+              {
+                "name": "published-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "published-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "max-results",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "start-index",
+                "value": "",
+                "type": "query",
+                "description": "Index of first result (1-indexed)"
+              },
+              {
+                "name": "depth",
+                "value": "",
+                "type": "query",
+                "description": "Response depth control"
+              }
+            ]
+          },
+          "docs": "Retrieve all Application Information [FB_33]"
+        },
+        {
+          "info": {
+            "name": "Retrieve Application Information by Id [FB_3]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.greenbuttonalliance.org:8443/DataCustodian/espi/1_1/resource/ApplicationInformation/:applicationInformationId",
+            "params": [
+              {
+                "name": "applicationInformationId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the ApplicationInformation resource"
+              }
+            ]
+          },
+          "docs": "Retrieve Application Information by Id [FB_3]"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Authorization",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Find all Authorizations [FB_3]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.greenbuttonalliance.org:8443/DataCustodian/espi/1_1/resource/Authorization",
+            "params": [
+              {
+                "name": "published-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "published-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "max-results",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "start-index",
+                "value": "",
+                "type": "query",
+                "description": "Index of first result (1-indexed)"
+              },
+              {
+                "name": "depth",
+                "value": "",
+                "type": "query",
+                "description": "Response depth control"
+              }
+            ]
+          },
+          "docs": "Find all Authorizations [FB_3]"
+        },
+        {
+          "info": {
+            "name": "Retrieve Authorization by Id [FB_3]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.greenbuttonalliance.org:8443/DataCustodian/espi/1_1/resource/Authorization/:authorizationId",
+            "params": [
+              {
+                "name": "authorizationId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Authorization resource"
+              },
+              {
+                "name": "published-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "published-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "max-results",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "start-index",
+                "value": "",
+                "type": "query",
+                "description": "Index of first result (1-indexed)"
+              },
+              {
+                "name": "depth",
+                "value": "",
+                "type": "query",
+                "description": "Response depth control"
+              }
+            ]
+          },
+          "docs": "Retrieve Authorization by Id [FB_3]"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Batch",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Request Bulk transfer [FB_35]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.greenbuttonalliance.org:8443/DataCustodian/espi/1_1/resource/Batch/Bulk/:bulkId",
+            "params": [
+              {
+                "name": "bulkId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Bulk transfer"
+              },
+              {
+                "name": "published-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "published-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "max-results",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "start-index",
+                "value": "",
+                "type": "query",
+                "description": "Index of first result (1-indexed)"
+              },
+              {
+                "name": "depth",
+                "value": "",
+                "type": "query",
+                "description": "Response depth control"
+              }
+            ]
+          },
+          "docs": "Request Bulk transfer [FB_35]"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "UsagePoint",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve all Usage Points [FB_33]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.greenbuttonalliance.org:8443/DataCustodian/espi/1_1/resource/UsagePoint",
+            "params": [
+              {
+                "name": "published-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "published-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "max-results",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "start-index",
+                "value": "",
+                "type": "query",
+                "description": "Index of first result (1-indexed)"
+              },
+              {
+                "name": "depth",
+                "value": "",
+                "type": "query",
+                "description": "Response depth control"
+              }
+            ]
+          },
+          "docs": "Retrieve all Usage Points [FB_33]"
+        },
+        {
+          "info": {
+            "name": "Retrieve Usage Point by Id [FB_32]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.greenbuttonalliance.org:8443/DataCustodian/espi/1_1/resource/UsagePoint/:usagePointId",
+            "params": [
+              {
+                "name": "usagePointId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the UsagePoint resource"
+              },
+              {
+                "name": "published-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "published-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum publication date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "updated-min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum update date (RFC 3339 instant)"
+              },
+              {
+                "name": "max-results",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "start-index",
+                "value": "",
+                "type": "query",
+                "description": "Index of first result (1-indexed)"
+              },
+              {
+                "name": "depth",
+                "value": "",
+                "type": "query",
+                "description": "Response depth control"
+              }
+            ]
+          },
+          "docs": "Retrieve Usage Point by Id [FB_32]"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
