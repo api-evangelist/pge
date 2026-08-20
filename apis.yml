@@ -188,6 +188,12 @@ apis:
   humanURL: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
   baseURL: https://api.pge.com/datacustodian/oauth/v2
   tags:
+  - Authentication
+  - Authorization
+  - Green Button
+  - ESPI
+  - Security
+  tags_raw:
   - OAuth
   - Authorization
   - Green Button
