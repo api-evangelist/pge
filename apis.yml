@@ -65,127 +65,26 @@ description: >-
   ZIP downloads behind an organization/name/email form and a data-use agreement,
   not an anonymous feed; California wholesale market data belongs to CAISO.
 apis:
-- aid: pge:pge-share-my-data-espi-api
-  name: PG&E Share My Data (Green Button Connect My Data) ESPI API
-  description: >-
-    PG&E's production Green Button Connect My Data implementation, branded Share
-    My Data. A NAESB REQ.21 Energy Services Provider Interface (ESPI) 1.1 REST
-    API returning Green Button Atom/XML, serving customer-authorized electric
-    and gas interval usage, usage summaries, reading types, billing and account
-    information, service tariff and rate-plan detail, and demand response
-    program enrollment. PG&E's own Supported-APIs reference enumerates the
-    resource set: DownloadSampleData, ReadServiceStatus, ApplicationInformation,
-    Authorization (feed, single, and DELETE revocation), LocalTimeParameters,
-    ReadingType, Subscription UsagePoint / MeterReading / IntervalBlock /
-    UsageSummary trees, and the asynchronous Batch family — Batch/Bulk/{BulkID},
-    Batch/Subscription/{SubscriptionID}, Batch/BulkRetailCustomerInfo/{BulkID},
-    Batch/RetailCustomer/{RetailCustomerID}, Batch/BulkRetailDRPrgInfo/{BulkID}
-    and Batch/RetailDRPrgInfo/{RetailCustomerID}. Asynchronous results are
-    announced to a third party's registered notification URI. Every production
-    request runs over mutual (two-way) TLS 1.2 with the third party's X.509
-    client certificate attached, plus a bearer token — client_access_token for
-    third-party-level resources, per-customer access_token for subscription
-    resources, registration_access_token for ApplicationInformation. Verified
-    live anonymously on 2026-07-27: the ESPI resource paths answer HTTP 400
-    "Invalid Certificate" from a Mulesoft-API-Gateway while invented sibling
-    paths answer HTTP 404 "No listener for endpoint", which distinguishes a real
-    mTLS-protected listener from a catch-all. Access is application-approval
-    gated; not self-serve.
-  humanURL: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
-  baseURL: https://api.pge.com/GreenButtonConnect/espi/1_1/resource
-  tags:
-  - Green Button
-  - ESPI
-  - Energy Data
-  - Smart Metering
-  - Electricity
-  - Gas
-  - Demand Response
-  properties:
-  - type: Documentation
-    url: https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html
-  - type: APIReference
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
-  - type: APIReference
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs-Click-Thru-2.0.pdf
-  - type: Documentation
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Data-Elements.pdf
-  - type: Documentation
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Relational-Data-Model.pdf
-  - type: Documentation
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Process-Flow.pdf
-  - type: XSD
-    url: schemas/pge-share-my-data-atom.xsd
-  - type: XSD
-    url: schemas/pge-share-my-data-espiDerived-20180821.xsd
-  - type: XSD
-    url: schemas/pge-share-my-data-retailcustomer-20180802.xsd
-  - type: XSD
-    url: schemas/pge-share-my-data-click-thru-2.0-espiDerived-20180315.xsd
-  - type: XSD
-    url: schemas/pge-share-my-data-click-thru-2.0-retailcustomer-20180315.xsd
-  - type: OpenAPI
-    url: openapi/green-button-alliance-espi-openapi.json
-  - type: Overlay
-    url: overlays/pge-green-button-alliance-espi-overlay.yaml
-  - type: Webhooks
-    url: asyncapi/pge-share-my-data-notifications.yml
-  - type: RateLimits
-    url: rate-limits/pge-rate-limits.yml
-  - type: ErrorCatalog
-    url: errors/pge-problem-types.yml
-  - type: Conventions
-    url: conventions/pge-conventions.yml
-  - type: DataModel
-    url: data-model/pge-data-model.yml
-  - type: Sandbox
-    url: sandbox/pge-sandbox.yml
-  - type: AgentSkill
-    url: skills/_index.yml
-  - type: Example
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip
-  - type: SDK
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/pythonsdk.zip
-  - type: SDK
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/javascriptsdk.zip
-  - type: Documentation
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-python-development-guide.pdf
-  - type: Documentation
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-javascript-development-guide.pdf
-  - type: Documentation
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
-  - type: TermsOfService
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf
-  - type: Registration
-    url: https://sharemydata.pge.com/
-  - type: Reference
-    url: https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf
 - aid: pge:pge-share-my-data-oauth-api
   name: PG&E Share My Data OAuth 2.0 Authorization API
   description: >-
-    The OAuth 2.0 authorization server behind Share My Data, implemented to meet
-    the NAESB ESPI authorization profile. Two token classes are issued
-    separately: a client access token via the client_credentials grant for
-    third-party-level resources, and a per-customer access/refresh token pair
-    via the authorization_code grant after a PG&E customer authenticates on
-    PG&E's site and selects what to share. Authorized scope is returned as an
-    ESPI function-block string (for example
-    FB=1_3_8_13_14_18_19_31_32_35_37_38_39_40_4_5_10_15_16_46_47 with
-    AdditionalScope, IntervalDuration, BlockDuration, HistoryLength and
-    AccountCollection parameters), documented in PG&E's supported function-block
-    scope-string mapping. PG&E publishes both a production authorization server
-    at /datacustodian/oauth/v2/ and a separate test authorization server at
-    /datacustodian/test/oauth/v2/ used during mandatory registration testing.
-    Verified live anonymously on 2026-07-27: GET on the token endpoint returns
-    HTTP 405 {"error":"invalid_request","error_description":"GET not
-    permitted"}, and an unparameterised request returns HTTP 400
-    {"error":"invalid_request","error_description":"Missing grant_type"} — real
-    RFC 6749 error responses from a Mulesoft-API-Gateway. Except for the browser
-    redirects in the authorization-code flow, every call must carry the third
-    party's client SSL certificate over mutual TLS. No
-    /.well-known/openid-configuration is served (HTTP 404 on both www.pge.com
-    and api.pge.com); this is OAuth 2.0, not OpenID Connect.
-  humanURL: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+    The OAuth 2.0 authorization server behind Share My Data, implemented to meet the NAESB ESPI authorization
+    profile. Two token classes are issued separately: a client access token via the client_credentials
+    grant for third-party-level resources, and a per-customer access/refresh token pair via the authorization_code
+    grant after a PG&E customer authenticates on PG&E's site and selects what to share. Authorized scope
+    is returned as an ESPI function-block string (for example FB=1_3_8_13_14_18_19_31_32_35_37_38_39_40_4_5_10_15_16_46_47
+    with AdditionalScope, IntervalDuration, BlockDuration, HistoryLength and AccountCollection parameters),
+    documented in PG&E's supported function-block scope-string mapping. PG&E publishes both a production
+    authorization server at /datacustodian/oauth/v2/ and a separate test authorization server at /datacustodian/test/oauth/v2/
+    used during mandatory registration testing. Verified live anonymously on 2026-07-27: GET on the token
+    endpoint returns HTTP 405 {"error":"invalid_request","error_description":"GET not permitted"}, and
+    an unparameterised request returns HTTP 400 {"error":"invalid_request","error_description":"Missing
+    grant_type"} — real RFC 6749 error responses from a Mulesoft-API-Gateway. Except for the browser redirects
+    in the authorization-code flow, every call must carry the third party's client SSL certificate over
+    mutual TLS. No /.well-known/openid-configuration is served (HTTP 404 on both www.pge.com and api.pge.com);
+    this is OAuth 2.0, not OpenID Connect.
+  humanURL: >-
+    https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
   baseURL: https://api.pge.com/datacustodian/oauth/v2
   tags:
   - Authentication
@@ -201,13 +100,17 @@ apis:
   - Security
   properties:
   - type: Documentation
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/OAuth_Authorization_ESPI.pdf
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/OAuth_Authorization_ESPI.pdf
   - type: Documentation
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf
   - type: APIReference
-    url: https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
   - type: Documentation
-    url: https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+    url: >-
+      https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
   - type: Registration
     url: https://sharemydata.pge.com/
   - type: Authentication
@@ -218,6 +121,310 @@ apis:
     url: sandbox/pge-sandbox.yml
   - type: Reference
     url: http://naesb.org/espi
+- aid: pge:pge-applicationinformation-api
+  name: Pacific Gas and Electric Application Information API
+  description: Application Information endpoints
+  humanURL: >-
+    https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  baseURL: https://api.pge.com/GreenButtonConnect/espi/1_1/resource
+  tags:
+  - ApplicationInformation
+  properties:
+  - type: OpenAPI
+    url: openapi/pge-applicationinformation-api-openapi.yml
+  - type: Documentation
+    url: >-
+      https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs-Click-Thru-2.0.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Data-Elements.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Relational-Data-Model.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Process-Flow.pdf
+  - type: XSD
+    url: schemas/pge-share-my-data-atom.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-espiDerived-20180821.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-retailcustomer-20180802.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-espiDerived-20180315.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-retailcustomer-20180315.xsd
+  - type: Webhooks
+    url: asyncapi/pge-share-my-data-notifications.yml
+  - type: RateLimits
+    url: rate-limits/pge-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/pge-problem-types.yml
+  - type: Conventions
+    url: conventions/pge-conventions.yml
+  - type: DataModel
+    url: data-model/pge-data-model.yml
+  - type: Sandbox
+    url: sandbox/pge-sandbox.yml
+  - type: Example
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip
+  - type: SDK
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/pythonsdk.zip
+  - type: SDK
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/javascriptsdk.zip
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-python-development-guide.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-javascript-development-guide.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
+  - type: TermsOfService
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf
+  - type: Registration
+    url: https://sharemydata.pge.com/
+  - type: Reference
+    url: https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf
+- aid: pge:pge-authorization-api
+  name: Pacific Gas and Electric Authorization API
+  description: Authorization endpoints
+  humanURL: >-
+    https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  baseURL: https://api.pge.com/GreenButtonConnect/espi/1_1/resource
+  tags:
+  - Authorization
+  properties:
+  - type: OpenAPI
+    url: openapi/pge-authorization-api-openapi.yml
+  - type: Documentation
+    url: >-
+      https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs-Click-Thru-2.0.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Data-Elements.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Relational-Data-Model.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Process-Flow.pdf
+  - type: XSD
+    url: schemas/pge-share-my-data-atom.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-espiDerived-20180821.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-retailcustomer-20180802.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-espiDerived-20180315.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-retailcustomer-20180315.xsd
+  - type: Webhooks
+    url: asyncapi/pge-share-my-data-notifications.yml
+  - type: RateLimits
+    url: rate-limits/pge-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/pge-problem-types.yml
+  - type: Conventions
+    url: conventions/pge-conventions.yml
+  - type: DataModel
+    url: data-model/pge-data-model.yml
+  - type: Sandbox
+    url: sandbox/pge-sandbox.yml
+  - type: Example
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip
+  - type: SDK
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/pythonsdk.zip
+  - type: SDK
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/javascriptsdk.zip
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-python-development-guide.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-javascript-development-guide.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
+  - type: TermsOfService
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf
+  - type: Registration
+    url: https://sharemydata.pge.com/
+  - type: Reference
+    url: https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf
+- aid: pge:pge-batch-api
+  name: Pacific Gas and Electric Batch API
+  description: Batch data transfer endpoints
+  humanURL: >-
+    https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  baseURL: https://api.pge.com/GreenButtonConnect/espi/1_1/resource
+  tags:
+  - Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/pge-batch-api-openapi.yml
+  - type: Documentation
+    url: >-
+      https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs-Click-Thru-2.0.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Data-Elements.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Relational-Data-Model.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Process-Flow.pdf
+  - type: XSD
+    url: schemas/pge-share-my-data-atom.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-espiDerived-20180821.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-retailcustomer-20180802.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-espiDerived-20180315.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-retailcustomer-20180315.xsd
+  - type: Webhooks
+    url: asyncapi/pge-share-my-data-notifications.yml
+  - type: RateLimits
+    url: rate-limits/pge-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/pge-problem-types.yml
+  - type: Conventions
+    url: conventions/pge-conventions.yml
+  - type: DataModel
+    url: data-model/pge-data-model.yml
+  - type: Sandbox
+    url: sandbox/pge-sandbox.yml
+  - type: Example
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip
+  - type: SDK
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/pythonsdk.zip
+  - type: SDK
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/javascriptsdk.zip
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-python-development-guide.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-javascript-development-guide.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
+  - type: TermsOfService
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf
+  - type: Registration
+    url: https://sharemydata.pge.com/
+  - type: Reference
+    url: https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf
+- aid: pge:pge-usagepoint-api
+  name: Pacific Gas and Electric Usage Point API
+  description: Usage Point endpoints
+  humanURL: >-
+    https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  baseURL: https://api.pge.com/GreenButtonConnect/espi/1_1/resource
+  tags:
+  - UsagePoint
+  properties:
+  - type: OpenAPI
+    url: openapi/pge-usagepoint-api-openapi.yml
+  - type: Documentation
+    url: >-
+      https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs-Click-Thru-2.0.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Data-Elements.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Relational-Data-Model.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Process-Flow.pdf
+  - type: XSD
+    url: schemas/pge-share-my-data-atom.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-espiDerived-20180821.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-retailcustomer-20180802.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-espiDerived-20180315.xsd
+  - type: XSD
+    url: schemas/pge-share-my-data-click-thru-2.0-retailcustomer-20180315.xsd
+  - type: Webhooks
+    url: asyncapi/pge-share-my-data-notifications.yml
+  - type: RateLimits
+    url: rate-limits/pge-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/pge-problem-types.yml
+  - type: Conventions
+    url: conventions/pge-conventions.yml
+  - type: DataModel
+    url: data-model/pge-data-model.yml
+  - type: Sandbox
+    url: sandbox/pge-sandbox.yml
+  - type: Example
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip
+  - type: SDK
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/pythonsdk.zip
+  - type: SDK
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/javascriptsdk.zip
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-python-development-guide.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-javascript-development-guide.pdf
+  - type: Documentation
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf
+  - type: TermsOfService
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf
+  - type: Registration
+    url: https://sharemydata.pge.com/
+  - type: Reference
+    url: https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf
 common:
 - type: AgenticAccess
   url: agentic-access/pge-agentic-access.yml
