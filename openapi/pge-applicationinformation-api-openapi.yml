@@ -1,0 +1,267 @@
+openapi: 3.2.0
+info:
+  title: Green Button API Documentation Application Information API
+  description: Green Button API - ESPI 4.0
+  version: 1.0.0
+  contact:
+    name: Green Button Alliance
+    url: https://www.greenbuttonalliance.org
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  x-provenance: Harvested verbatim from the Green Button Alliance OpenAPI-Green-Button-Documentation repository. This is the STANDARD contract (NAESB REQ.21 ESPI) that PG&E Share My Data implements. It is NOT authored or published by Pacific Gas and Electric Company, and its declared server is the Green Button Alliance public sandbox, NOT a PG&E host. PG&E publishes no first-party OpenAPI. PG&E production ESPI resources live under https://api.pge.com/GreenButtonConnect/espi/1_1/resource/ and are enumerated in PG&E Supported-APIs.pdf.
+  x-source-url: https://raw.githubusercontent.com/GreenButtonAlliance/OpenAPI-Green-Button-Documentation/main/green-button-openapi.json
+  x-harvested: '2026-07-27'
+  x-harvest-http-status: 200
+  x-not-a-pge-host: true
+servers:
+- url: https://sandbox.greenbuttonalliance.org:8443/DataCustodian
+  description: GBA Green Button Sandbox
+security:
+- oauth2: []
+tags:
+- name: ApplicationInformation
+  description: Application Information endpoints
+paths:
+  /espi/1_1/resource/ApplicationInformation:
+    get:
+      tags:
+      - ApplicationInformation
+      summary: Retrieve all Application Information [FB_33]
+      operationId: findApplicationInformations
+      parameters:
+      - name: published-max
+        in: query
+        description: Maximum publication date (RFC 3339 instant)
+        schema:
+          type: string
+          format: date
+      - name: published-min
+        in: query
+        description: Minimum publication date (RFC 3339 instant)
+        schema:
+          type: string
+          format: date
+      - name: updated-max
+        in: query
+        description: Maximum update date (RFC 3339 instant)
+        schema:
+          type: string
+          format: date
+      - name: updated-min
+        in: query
+        description: Minimum update date (RFC 3339 instant)
+        schema:
+          type: string
+          format: date
+      - name: max-results
+        in: query
+        description: Maximum number of results to return
+        schema:
+          type: integer
+          format: int64
+      - name: start-index
+        in: query
+        description: Index of first result (1-indexed)
+        schema:
+          type: integer
+          format: int64
+      - name: depth
+        in: query
+        description: Response depth control
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/atom+xml:
+              schema:
+                $ref: '#/components/schemas/AtomFeed'
+        '202':
+          description: Accepted
+          content:
+            application/atom+xml:
+              schema:
+                $ref: '#/components/schemas/AtomFeed'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+  /espi/1_1/resource/ApplicationInformation/{applicationInformationId}:
+    get:
+      tags:
+      - ApplicationInformation
+      summary: Retrieve Application Information by Id [FB_3]
+      operationId: getApplicationInformation
+      parameters:
+      - name: applicationInformationId
+        in: path
+        required: true
+        description: Unique identifier for the ApplicationInformation resource
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/atom+xml:
+              schema:
+                $ref: '#/components/schemas/ApplicationInformation'
+        '202':
+          description: Accepted
+          content:
+            application/atom+xml:
+              schema:
+                $ref: '#/components/schemas/ApplicationInformation'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+components:
+  schemas:
+    AtomLink:
+      type: object
+      description: Atom link element (RFC 4287)
+      xml:
+        name: link
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        href:
+          type: string
+          format: uri
+          description: Link URI
+        rel:
+          type: string
+          description: Link relationship type (e.g., 'self', 'up')
+        type:
+          type: string
+          description: Media type (e.g., 'application/atom+xml')
+    AtomEntry:
+      type: object
+      description: Atom feed entry (RFC 4287) containing ESPI resource
+      xml:
+        name: entry
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        id:
+          type: string
+          format: uri
+          description: Unique entry identifier
+        title:
+          type: string
+          description: Entry title
+        published:
+          type: string
+          format: date-time
+          description: ISO 8601 publication timestamp
+        updated:
+          type: string
+          format: date-time
+          description: ISO 8601 last update timestamp
+        link:
+          type: array
+          items:
+            $ref: '#/components/schemas/AtomLink'
+          description: Entry links (minimum 2 required per Atom spec)
+        content:
+          $ref: '#/components/schemas/AtomContent'
+    AtomContent:
+      type: object
+      description: Atom content element containing ESPI resource (RFC 4287)
+      xml:
+        name: content
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        type:
+          type: string
+          description: Content media type (typically 'application/xml')
+    ApplicationInformation:
+      type: object
+      description: Contains information about a Third Party Application requesting access to DataCustodian services
+      xml:
+        name: ApplicationInformation
+        namespace: http://naesb.org/espi
+      properties:
+        dataCustodianId:
+          type: string
+          description: Identifier for the Data Custodian
+        dataCustodianApplicationStatus:
+          type: integer
+          description: Current status of the application (provided by Data Custodian)
+        thirdPartyApplicationDescription:
+          type: string
+          description: Description of the Third Party Application
+        thirdPartyApplicationStatus:
+          type: integer
+          description: Current status of the Third Party Application
+        thirdPartyApplicationType:
+          type: integer
+          description: Type of application (1=Web, 2=Desktop, 3=Mobile, 4=Device)
+        thirdPartyApplicationUse:
+          type: integer
+          description: Expected use of the application
+        client_name:
+          type: string
+          description: Name of the application (OAuth client_name)
+        client_id:
+          type: string
+          description: Identifier for the Third Party (OAuth client_id)
+        client_secret:
+          type: string
+          description: Secret for the client (OAuth client_secret)
+        redirect_uri:
+          type: array
+          items:
+            type: string
+          description: OAuth redirect URIs
+        scope:
+          type: array
+          items:
+            type: string
+          description: OAuth scopes
+        grant_types:
+          type: array
+          items:
+            type: string
+          description: Supported OAuth grant types
+    AtomFeed:
+      type: object
+      description: Atom Feed (RFC 4287) containing ESPI resources
+      xml:
+        name: feed
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        id:
+          type: string
+          format: uri
+          description: Feed identifier
+        title:
+          type: string
+          description: Feed title
+        updated:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of last feed update
+        link:
+          type: array
+          items:
+            $ref: '#/components/schemas/AtomLink'
+          description: Feed links (minimum 1 required per Atom spec)
+        entry:
+          type: array
+          items:
+            $ref: '#/components/schemas/AtomEntry'
+          description: Feed entries containing ESPI resources
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://sandbox.greenbuttonalliance.org:8443/oauth/authorize
+          tokenUrl: https://sandbox.greenbuttonalliance.org:8443/oauth/token
+          scopes: {}
+        clientCredentials:
+          tokenUrl: https://sandbox.greenbuttonalliance.org:8443/oauth/token
+          scopes: {}
