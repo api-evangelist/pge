@@ -163,62 +163,6 @@ paths:
           description: Forbidden
 components:
   schemas:
-    AtomLink:
-      type: object
-      description: Atom link element (RFC 4287)
-      xml:
-        name: link
-        namespace: http://www.w3.org/2005/Atom
-      properties:
-        href:
-          type: string
-          format: uri
-          description: Link URI
-        rel:
-          type: string
-          description: Link relationship type (e.g., 'self', 'up')
-        type:
-          type: string
-          description: Media type (e.g., 'application/atom+xml')
-    AtomEntry:
-      type: object
-      description: Atom feed entry (RFC 4287) containing ESPI resource
-      xml:
-        name: entry
-        namespace: http://www.w3.org/2005/Atom
-      properties:
-        id:
-          type: string
-          format: uri
-          description: Unique entry identifier
-        title:
-          type: string
-          description: Entry title
-        published:
-          type: string
-          format: date-time
-          description: ISO 8601 publication timestamp
-        updated:
-          type: string
-          format: date-time
-          description: ISO 8601 last update timestamp
-        link:
-          type: array
-          items:
-            $ref: '#/components/schemas/AtomLink'
-          description: Entry links (minimum 2 required per Atom spec)
-        content:
-          $ref: '#/components/schemas/AtomContent'
-    AtomContent:
-      type: object
-      description: Atom content element containing ESPI resource (RFC 4287)
-      xml:
-        name: content
-        namespace: http://www.w3.org/2005/Atom
-      properties:
-        type:
-          type: string
-          description: Content media type (typically 'application/xml')
     AtomFeed:
       type: object
       description: Atom Feed (RFC 4287) containing ESPI resources
@@ -282,6 +226,62 @@ components:
           type: string
           format: uri
           description: URI to access PII data authorized for this customer
+    AtomContent:
+      type: object
+      description: Atom content element containing ESPI resource (RFC 4287)
+      xml:
+        name: content
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        type:
+          type: string
+          description: Content media type (typically 'application/xml')
+    AtomLink:
+      type: object
+      description: Atom link element (RFC 4287)
+      xml:
+        name: link
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        href:
+          type: string
+          format: uri
+          description: Link URI
+        rel:
+          type: string
+          description: Link relationship type (e.g., 'self', 'up')
+        type:
+          type: string
+          description: Media type (e.g., 'application/atom+xml')
+    AtomEntry:
+      type: object
+      description: Atom feed entry (RFC 4287) containing ESPI resource
+      xml:
+        name: entry
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        id:
+          type: string
+          format: uri
+          description: Unique entry identifier
+        title:
+          type: string
+          description: Entry title
+        published:
+          type: string
+          format: date-time
+          description: ISO 8601 publication timestamp
+        updated:
+          type: string
+          format: date-time
+          description: ISO 8601 last update timestamp
+        link:
+          type: array
+          items:
+            $ref: '#/components/schemas/AtomLink'
+          description: Entry links (minimum 2 required per Atom spec)
+        content:
+          $ref: '#/components/schemas/AtomContent'
   securitySchemes:
     oauth2:
       type: oauth2

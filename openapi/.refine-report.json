@@ -1,0 +1,26 @@
+{
+  "provider": "pge",
+  "sources": [
+    "_original/green-button-alliance-espi-openapi.json"
+  ],
+  "outputs": [
+    "pge-applicationinformation-api-openapi.yml",
+    "pge-authorization-api-openapi.yml",
+    "pge-batch-api-openapi.yml",
+    "pge-usagepoint-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "green-button-alliance-espi-openapi.json: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "pge-applicationinformation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "pge-authorization-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "pge-batch-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "pge-usagepoint-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
