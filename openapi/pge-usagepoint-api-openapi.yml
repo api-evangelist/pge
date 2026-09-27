@@ -163,31 +163,23 @@ paths:
           description: Forbidden
 components:
   schemas:
-    UsagePoint:
+    AtomLink:
       type: object
-      description: Logical point on a network at which consumption or production is measured or estimated
+      description: Atom link element (RFC 4287)
       xml:
-        name: UsagePoint
-        namespace: http://naesb.org/espi
+        name: link
+        namespace: http://www.w3.org/2005/Atom
       properties:
-        roleFlags:
+        href:
           type: string
-          description: Specifies roles assigned to this usage point
-        ServiceCategory:
-          type: integer
-          description: Category of service (0=electricity, 1=gas, 2=water, etc.)
-        status:
-          type: integer
-          description: Current status (0=off, 1=on)
-        isSdp:
-          type: boolean
-          description: Whether this is a service delivery point
-        isVirtual:
-          type: boolean
-          description: Whether this is a virtual (logical) usage point
-        connectionState:
+          format: uri
+          description: Link URI
+        rel:
           type: string
-          description: Connection state relative to network
+          description: Link relationship type (e.g., 'self', 'up')
+        type:
+          type: string
+          description: Media type (e.g., 'application/atom+xml')
     AtomFeed:
       type: object
       description: Atom Feed (RFC 4287) containing ESPI resources
@@ -226,23 +218,6 @@ components:
         type:
           type: string
           description: Content media type (typically 'application/xml')
-    AtomLink:
-      type: object
-      description: Atom link element (RFC 4287)
-      xml:
-        name: link
-        namespace: http://www.w3.org/2005/Atom
-      properties:
-        href:
-          type: string
-          format: uri
-          description: Link URI
-        rel:
-          type: string
-          description: Link relationship type (e.g., 'self', 'up')
-        type:
-          type: string
-          description: Media type (e.g., 'application/atom+xml')
     AtomEntry:
       type: object
       description: Atom feed entry (RFC 4287) containing ESPI resource
@@ -272,6 +247,31 @@ components:
           description: Entry links (minimum 2 required per Atom spec)
         content:
           $ref: '#/components/schemas/AtomContent'
+    UsagePoint:
+      type: object
+      description: Logical point on a network at which consumption or production is measured or estimated
+      xml:
+        name: UsagePoint
+        namespace: http://naesb.org/espi
+      properties:
+        roleFlags:
+          type: string
+          description: Specifies roles assigned to this usage point
+        ServiceCategory:
+          type: integer
+          description: Category of service (0=electricity, 1=gas, 2=water, etc.)
+        status:
+          type: integer
+          description: Current status (0=off, 1=on)
+        isSdp:
+          type: boolean
+          description: Whether this is a service delivery point
+        isVirtual:
+          type: boolean
+          description: Whether this is a virtual (logical) usage point
+        connectionState:
+          type: string
+          description: Connection state relative to network
   securitySchemes:
     oauth2:
       type: oauth2

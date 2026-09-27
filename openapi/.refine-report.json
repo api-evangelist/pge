@@ -1,21 +1,28 @@
 {
   "provider": "pge",
   "sources": [
-    "_original/green-button-alliance-espi-openapi.json"
+    "_original/green-button-alliance-espi-openapi.json",
+    "pg-and-e-subscriptions-api-openapi.yml",
+    "pg-and-e-usage-api-openapi.yml"
   ],
   "outputs": [
     "pge-applicationinformation-api-openapi.yml",
     "pge-authorization-api-openapi.yml",
     "pge-batch-api-openapi.yml",
-    "pge-usagepoint-api-openapi.yml"
+    "pge-usagepoint-api-openapi.yml",
+    "pge-subscriptions-api-openapi.yml",
+    "pge-usage-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "archived openapi/pg-and-e-subscriptions-api-openapi.yml",
+    "archived openapi/pg-and-e-usage-api-openapi.yml"
+  ],
   "errors": [],
   "warnings": [],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "green-button-alliance-espi-openapi.json: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "apis.yml register: written (+2 apis, 7 total)"
   ],
   "skipped": [
     "pge-applicationinformation-api-openapi.yml: previously refined output, superseded by openapi/_original/",

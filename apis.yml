@@ -453,7 +453,53 @@ apis:
     url: https://sharemydata.pge.com/
   - type: Reference
     url: https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf
+- aid: pge:pge-subscriptions-api
+  name: Pacific Gas and Electric Subscriptions API
+  description: Manage data subscriptions for customer accounts.
+  humanURL: >-
+    https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  baseURL: https://api.pge.com/datacustodian/oauth/v2
+  tags:
+  - Subscriptions
+  properties:
+  - type: OpenAPI
+    url: openapi/pge-subscriptions-api-openapi.yml
+  - type: Documentation
+    url: >-
+      https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+  - type: Authentication
+    url: authentication/pg-and-e-authentication.yml
+  - type: OAuthScopes
+    url: scopes/pg-and-e-scopes.yml
+- aid: pge:pge-usage-api
+  name: Pacific Gas and Electric Usage API
+  description: Retrieve energy usage interval data.
+  humanURL: >-
+    https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  baseURL: https://api.pge.com/datacustodian/oauth/v2
+  tags:
+  - Usage
+  properties:
+  - type: OpenAPI
+    url: openapi/pge-usage-api-openapi.yml
+  - type: Documentation
+    url: >-
+      https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html
+  - type: APIReference
+    url: >-
+      https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf
+  - type: Authentication
+    url: authentication/pg-and-e-authentication.yml
+  - type: OAuthScopes
+    url: scopes/pg-and-e-scopes.yml
 common:
+- type: Overlay
+  url: overlays/pg-and-e-subscriptions-api-overlay.yaml
+- type: Overlay
+  url: overlays/pg-and-e-usage-api-overlay.yaml
 - type: AgenticAccess
   url: agentic-access/pge-agentic-access.yml
 - type: DomainSecurity
@@ -531,3 +577,4 @@ common:
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+x-parent: pgande-corp
