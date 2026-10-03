@@ -180,44 +180,31 @@ components:
         type:
           type: string
           description: Media type (e.g., 'application/atom+xml')
-    AtomFeed:
+    UsagePoint:
       type: object
-      description: Atom Feed (RFC 4287) containing ESPI resources
+      description: Logical point on a network at which consumption or production is measured or estimated
       xml:
-        name: feed
-        namespace: http://www.w3.org/2005/Atom
+        name: UsagePoint
+        namespace: http://naesb.org/espi
       properties:
-        id:
+        roleFlags:
           type: string
-          format: uri
-          description: Feed identifier
-        title:
+          description: Specifies roles assigned to this usage point
+        ServiceCategory:
+          type: integer
+          description: Category of service (0=electricity, 1=gas, 2=water, etc.)
+        status:
+          type: integer
+          description: Current status (0=off, 1=on)
+        isSdp:
+          type: boolean
+          description: Whether this is a service delivery point
+        isVirtual:
+          type: boolean
+          description: Whether this is a virtual (logical) usage point
+        connectionState:
           type: string
-          description: Feed title
-        updated:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp of last feed update
-        link:
-          type: array
-          items:
-            $ref: '#/components/schemas/AtomLink'
-          description: Feed links (minimum 1 required per Atom spec)
-        entry:
-          type: array
-          items:
-            $ref: '#/components/schemas/AtomEntry'
-          description: Feed entries containing ESPI resources
-    AtomContent:
-      type: object
-      description: Atom content element containing ESPI resource (RFC 4287)
-      xml:
-        name: content
-        namespace: http://www.w3.org/2005/Atom
-      properties:
-        type:
-          type: string
-          description: Content media type (typically 'application/xml')
+          description: Connection state relative to network
     AtomEntry:
       type: object
       description: Atom feed entry (RFC 4287) containing ESPI resource
@@ -247,31 +234,44 @@ components:
           description: Entry links (minimum 2 required per Atom spec)
         content:
           $ref: '#/components/schemas/AtomContent'
-    UsagePoint:
+    AtomContent:
       type: object
-      description: Logical point on a network at which consumption or production is measured or estimated
+      description: Atom content element containing ESPI resource (RFC 4287)
       xml:
-        name: UsagePoint
-        namespace: http://naesb.org/espi
+        name: content
+        namespace: http://www.w3.org/2005/Atom
       properties:
-        roleFlags:
+        type:
           type: string
-          description: Specifies roles assigned to this usage point
-        ServiceCategory:
-          type: integer
-          description: Category of service (0=electricity, 1=gas, 2=water, etc.)
-        status:
-          type: integer
-          description: Current status (0=off, 1=on)
-        isSdp:
-          type: boolean
-          description: Whether this is a service delivery point
-        isVirtual:
-          type: boolean
-          description: Whether this is a virtual (logical) usage point
-        connectionState:
+          description: Content media type (typically 'application/xml')
+    AtomFeed:
+      type: object
+      description: Atom Feed (RFC 4287) containing ESPI resources
+      xml:
+        name: feed
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        id:
           type: string
-          description: Connection state relative to network
+          format: uri
+          description: Feed identifier
+        title:
+          type: string
+          description: Feed title
+        updated:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of last feed update
+        link:
+          type: array
+          items:
+            $ref: '#/components/schemas/AtomLink'
+          description: Feed links (minimum 1 required per Atom spec)
+        entry:
+          type: array
+          items:
+            $ref: '#/components/schemas/AtomEntry'
+          description: Feed entries containing ESPI resources
   securitySchemes:
     oauth2:
       type: oauth2
