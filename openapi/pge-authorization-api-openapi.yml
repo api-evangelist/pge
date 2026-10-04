@@ -163,6 +163,79 @@ paths:
           description: Forbidden
 components:
   schemas:
+    AtomFeed:
+      type: object
+      description: Atom Feed (RFC 4287) containing ESPI resources
+      xml:
+        name: feed
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        id:
+          type: string
+          format: uri
+          description: Feed identifier
+        title:
+          type: string
+          description: Feed title
+        updated:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of last feed update
+        link:
+          type: array
+          items:
+            $ref: '#/components/schemas/AtomLink'
+          description: Feed links (minimum 1 required per Atom spec)
+        entry:
+          type: array
+          items:
+            $ref: '#/components/schemas/AtomEntry'
+          description: Feed entries containing ESPI resources
+    AtomContent:
+      type: object
+      description: Atom content element containing ESPI resource (RFC 4287)
+      xml:
+        name: content
+        namespace: http://www.w3.org/2005/Atom
+      properties:
+        type:
+          type: string
+          description: Content media type (typically 'application/xml')
+    Authorization:
+      type: object
+      description: Represents a permission granted by an owner for access to a resource
+      xml:
+        name: Authorization
+        namespace: http://naesb.org/espi
+      properties:
+        status:
+          type: integer
+          description: Status of the authorization (0=Revoked, 1=Active, 2=Denied)
+        expires_at:
+          type: integer
+          format: int64
+          description: Expiration period for the access token (Unix timestamp)
+        grant_type:
+          type: string
+          description: Type of grant being negotiated
+        scope:
+          type: string
+          description: Negotiated scope of the authorization
+        token_type:
+          type: string
+          description: Type of token (Bearer)
+        resourceURI:
+          type: string
+          format: uri
+          description: URI to access the authorized resource
+        authorizationURI:
+          type: string
+          format: uri
+          description: URI to update or delete this authorization
+        customerResourceURI:
+          type: string
+          format: uri
+          description: URI to access PII data authorized for this customer
     AtomLink:
       type: object
       description: Atom link element (RFC 4287)
@@ -209,79 +282,6 @@ components:
           description: Entry links (minimum 2 required per Atom spec)
         content:
           $ref: '#/components/schemas/AtomContent'
-    AtomContent:
-      type: object
-      description: Atom content element containing ESPI resource (RFC 4287)
-      xml:
-        name: content
-        namespace: http://www.w3.org/2005/Atom
-      properties:
-        type:
-          type: string
-          description: Content media type (typically 'application/xml')
-    AtomFeed:
-      type: object
-      description: Atom Feed (RFC 4287) containing ESPI resources
-      xml:
-        name: feed
-        namespace: http://www.w3.org/2005/Atom
-      properties:
-        id:
-          type: string
-          format: uri
-          description: Feed identifier
-        title:
-          type: string
-          description: Feed title
-        updated:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp of last feed update
-        link:
-          type: array
-          items:
-            $ref: '#/components/schemas/AtomLink'
-          description: Feed links (minimum 1 required per Atom spec)
-        entry:
-          type: array
-          items:
-            $ref: '#/components/schemas/AtomEntry'
-          description: Feed entries containing ESPI resources
-    Authorization:
-      type: object
-      description: Represents a permission granted by an owner for access to a resource
-      xml:
-        name: Authorization
-        namespace: http://naesb.org/espi
-      properties:
-        status:
-          type: integer
-          description: Status of the authorization (0=Revoked, 1=Active, 2=Denied)
-        expires_at:
-          type: integer
-          format: int64
-          description: Expiration period for the access token (Unix timestamp)
-        grant_type:
-          type: string
-          description: Type of grant being negotiated
-        scope:
-          type: string
-          description: Negotiated scope of the authorization
-        token_type:
-          type: string
-          description: Type of token (Bearer)
-        resourceURI:
-          type: string
-          format: uri
-          description: URI to access the authorized resource
-        authorizationURI:
-          type: string
-          format: uri
-          description: URI to update or delete this authorization
-        customerResourceURI:
-          type: string
-          format: uri
-          description: URI to access PII data authorized for this customer
   securitySchemes:
     oauth2:
       type: oauth2
