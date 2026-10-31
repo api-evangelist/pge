@@ -1,4 +1,4 @@
-# Pacific Gas and Electric (pge)
+# Pacific Gas and Electric
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,136 +64,142 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Pacific Gas and Electric Company is the investor-owned electric and natural gas utility for northern and central California — incorporated in California in 1905, headquartered in Oakland, roughly 23,000 employees, a 70,000-square-mile service area, about 5.5 million electric accounts and 4.5 million gas accounts, and a subsidiary of PG&E Corporation. It sits in the wires, pipes and metering layer of the United States value chain: a vertically integrated regulated distribution utility that owns the meter and the customer relationship, does not run the wholesale market (CAISO does), and is regulated by the California Public Utilities Commission.
+Pacific Gas and Electric Company is the investor-owned electric and natural gas utility for northern and central California — incorporated in California in 1905, headquartered in Oakland, roughly 23,000 employees, a 70,000-square- mile service area, about 5.5 million electric accounts and 4.5 million gas accounts, and a subsidiary of PG&E Corporation. It sits in the wires, pipes and metering layer of the United States value chain: a vertically integrated regulated distribution utility that owns the meter and the customer relationship, does not run the wholesale market (CAISO does), and is regulated by the California Public Utilities Commission. Its API posture is the outlier of the American utility sector and deserves to be recorded precisely, because the United States has no federal energy consumer-data mandate at all. PG&E runs Share My Data, its production Green Button Connect My Data implementation, on a live MuleSoft API gateway at https://api.pge.com — a NAESB REQ.21 ESPI 1.1 surface with roughly two dozen documented resources under /GreenButtonConnect/espi/1_1/resource/, an OAuth 2.0 authorization server at /datacustodian/oauth/v2/, and a separate published test environment at /datacustodian/test/oauth/v2/. Unlike almost every other US utility, PG&E publishes the whole contract anonymously: a complete supported-API reference, an OAuth/ESPI authorization guide, a relational data model, supported data elements, function-block scope-string mappings, the ESPI and Share My Data XSD schemas, sample MeterReadings XML, Python and JavaScript SDKs with development guides, published rate limits (one request per second per vendor, 2,000 calls per hour and 20,000 calls per 24 hours per client ID) and a SoapUI walkthrough — all reachable without a login at pge.com. What is not open is the data itself. Share My Data is application-approval gated: a third party needs a US EIN, eligible standing with the CPUC, a CA-issued TLS 1.2 X.509 certificate (self-signed rejected), acceptance of the CPUC-filed Customer Data Access Tariff, and successful connectivity and OAuth testing before approval, after which every production call runs over mutual TLS with bearer tokens scoped to an individual customer's authorization. The mandate story is equally specific and must not be flattened into "voluntary Green Button": California compels third-party access through state law and CPUC tariff — Public Utilities Code section 8380 (SB 1476, 2010), the Customer Information Service Request for Share My Data tariff form (Cal. P.U.C. Sheet 55826-E, Sample Form 79-1186, Advice 6900-E, effective 1 April 2023), and Electric Rule 24 / Gas Rule 25 for demand response providers — but no federal obligation and no Ontario-style Green Button regulation applies. The consumer-versus-market split is stark: consumer data is a real, verified, standards-conformant API behind consent and approval, while PG&E publishes no open market or grid API whatsoever. Its aggregated ZIP-code electric and gas usage datasets, released quarterly under CPUC Decision 14-05-016 through the Energy Data Request Program, are CSV-in- ZIP downloads behind an organization/name/email form and a data-use agreement, not an anonymous feed; California wholesale market data belongs to CAISO.
 
-Its API posture is the outlier of the American utility sector. The United States has no federal energy consumer-data mandate, yet PG&E runs **Share My Data**, a production Green Button Connect My Data implementation, on a live MuleSoft API gateway at `https://api.pge.com` — a NAESB REQ.21 ESPI 1.1 surface with roughly two dozen documented resources, an OAuth 2.0 authorization server, and a separate published test environment. Unlike almost every other US utility, PG&E publishes the whole contract anonymously without a login: a complete supported-API reference, an OAuth/ESPI authorization guide, a relational data model, function-block scope-string mappings, the ESPI and Share My Data XSD schemas, a worked sample payload, Python and JavaScript SDKs with development guides, published rate limits and a SoapUI walkthrough.
+**Areas:** Energy · United States · Utilities · Electricity · Gas · California · Smart Metering · Green Button · ESPI · Energy Data · Grid · Demand Response
 
-What is not open is the data. Share My Data is application-approval gated, and PG&E publishes no open market or grid API at all.
+## Pacific Gas and Electric on APIs.io
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/pge/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/pge/refs/heads/main/apis.yml)
+Everything profiled for Pacific Gas and Electric is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/pge/](https://apis.io/providers/pge/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (7)
 
-- Energy
-- United States
-- Utilities
-- Electricity
-- Gas
-- California
-- Smart Metering
-- Green Button
-- ESPI
-- Energy Data
-- Grid
-- Demand Response
-- Investor-Owned Utility
+- [PG&E Share My Data OAuth 2.0 Authorization API](https://apis.io/apis/pge/pge-share-my-data-oauth-api/) — The OAuth 2.0 authorization server behind Share My Data, implemented to meet the NAESB ESPI authorization profile. Two token classes are issued separately:…
+- [Pacific Gas and Electric Application Information API](https://apis.io/apis/pge/pge-applicationinformation-api/) — Application Information endpoints
+- [Pacific Gas and Electric Authorization API](https://apis.io/apis/pge/pge-authorization-api/) — Authorization endpoints
+- [Pacific Gas and Electric Batch API](https://apis.io/apis/pge/pge-batch-api/) — Batch data transfer endpoints
+- [Pacific Gas and Electric Usage Point API](https://apis.io/apis/pge/pge-usagepoint-api/) — Usage Point endpoints
+- [Pacific Gas and Electric Subscriptions API](https://apis.io/apis/pge/pge-subscriptions-api/) — Manage data subscriptions for customer accounts.
+- [Pacific Gas and Electric Usage API](https://apis.io/apis/pge/pge-usage-api/) — Retrieve energy usage interval data.
 
-## Timestamps
+### Published properties
 
-- **Created:** 2026-07-27
-- **Modified:** 2026-07-27
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## Mandate and access at a glance
+#### AsyncAPI (1)
 
-| | |
-|---|---|
-| **Mandate regime** | `other` — California state, not federal, not Ontario. Public Utilities Code §8380 (SB 1476, 2010); CPUC-filed Customer Data Access Tariff (Electric Sample Form 79-1186, CISR-SMD, Cal. P.U.C. Sheet 55826-E, Advice 6900-E, effective 2023-04-01); Electric Rule 24 / Gas Rule 25; CPUC D.14-05-016 for aggregated data. |
-| **Mandate status** | `live-implemented` — verified by differential HTTP probing on 2026-07-27, not by any claim. |
-| **Data standard** | Green Button Connect My Data on NAESB REQ.21 ESPI 1.1, Green Button Atom/XML. |
-| **Consumer data API** | Yes — real, documented, standards-conformant, consent- and approval-gated. |
-| **Open market data** | No — no open grid or system API; aggregated ZIP-code datasets are form- and licence-gated file downloads. |
-| **Access gate** | `application-approval` — US EIN, CPUC standing, public-CA X.509 certificate, tariff acceptance, 90-day registration testing, then approval. |
-| **Auth model** | OAuth 2.0 (`authorization_code`, `client_credentials`, `refresh_token`) over mandatory mutual TLS 1.2 with client X.509 certificates. No OpenID Connect — `/.well-known/openid-configuration` is 404 everywhere. |
-| **Home market** | United States |
+Event-driven and webhook contracts.
 
-## APIs
+- [Pge Share My Data Notifications](https://apis.io/asyncapis/pge/pge-share-my-data-notifications/)
 
-### PG&E Share My Data (Green Button Connect My Data) ESPI API
+#### Agentic access (1)
 
-PG&E's production Green Button Connect My Data implementation. A NAESB REQ.21 ESPI 1.1 REST API returning Green Button Atom/XML, serving customer-authorized electric and gas interval usage, usage summaries, reading types, billing and account information, service tariff and rate-plan detail, and demand response program enrollment. Verified live anonymously on 2026-07-27: ESPI resource paths answer HTTP 400 `"Invalid Certificate"` from a `Mulesoft-API-Gateway` while deliberately invented sibling paths answer HTTP 404 `No listener for endpoint` — which distinguishes a real mTLS-protected listener from a catch-all.
+Which operations an agent can call, which act, and which need a human in the loop.
 
-- **Human URL:** [https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html](https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html)
-- **Base URL:** `https://api.pge.com/GreenButtonConnect/espi/1_1/resource`
+- [Pge Agentic Access](https://apis.io/agentic-access/pge/pge-agentic-access/)
 
-#### Tags
+#### Collections (1)
 
-- Green Button
-- ESPI
-- Energy Data
-- Smart Metering
-- Electricity
-- Gas
-- Demand Response
+Postman and Open Collection request collections.
 
-#### Properties
+- [Green Button API Documentation](https://apis.io/collections/pge/open-green-button-alliance-espi/)
 
-- [Documentation — Share My Data overview](https://www.pge.com/en/save-energy-and-money/energy-usage-and-tips/understand-my-usage/share-my-data.html)
-- [API Reference — Supported APIs (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf)
-- [API Reference — Supported APIs, Click-Thru 2.0 (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs-Click-Thru-2.0.pdf)
-- [Documentation — Supported Data Elements (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Data-Elements.pdf)
-- [Documentation — Supported Relational Data Model (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Relational-Data-Model.pdf)
-- [Documentation — Process Flow (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Process-Flow.pdf)
-- [XSD](schemas/pge-share-my-data-atom.xsd) — ESPI Atom schema
-- [XSD](schemas/pge-share-my-data-espiDerived-20180821.xsd) — espiDerived 2018-08-21
-- [XSD](schemas/pge-share-my-data-retailcustomer-20180802.xsd) — retailcustomer 2018-08-02
-- [XSD](schemas/pge-share-my-data-click-thru-2.0-espiDerived-20180315.xsd) — Click-Thru 2.0 espiDerived
-- [XSD](schemas/pge-share-my-data-click-thru-2.0-retailcustomer-20180315.xsd) — Click-Thru 2.0 retailcustomer
-- [OpenAPI](openapi/green-button-alliance-espi-openapi.json) — the Green Button Alliance's ESPI contract, **not** PG&E's; see `review.yml`
-- [Example — MeterReadings sample XML](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/MeterReadings_Example.zip)
-- [SDK — Python](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/pythonsdk.zip)
-- [SDK — JavaScript](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/javascriptsdk.zip)
-- [Documentation — Python development guide (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-python-development-guide.pdf)
-- [Documentation — JavaScript development guide (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/smd-javascript-development-guide.pdf)
-- [Documentation — SoapUI steps (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/soap-ui-steps.pdf)
-- [Terms of Service — Share My Data Platform Terms of Use (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf)
-- [Registration](https://sharemydata.pge.com/)
-- [Reference — CPUC-filed CISR-SMD tariff form (PDF)](https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_FORMS_79-1186.pdf)
+#### Overlays (3)
 
-### PG&E Share My Data OAuth 2.0 Authorization API
+OpenAPI overlays, including conversational phrasing for each operation.
 
-The OAuth 2.0 authorization server behind Share My Data, implemented to meet the NAESB ESPI authorization profile. Two token classes are issued separately: a client access token via `client_credentials` for third-party-level resources, and a per-customer access/refresh token pair via `authorization_code`. Authorized scope is returned as an ESPI function-block string. PG&E publishes both a production authorization server and a separate test authorization server used during mandatory registration testing. Verified live anonymously on 2026-07-27: `GET` on the token endpoint returns HTTP 405 `{"error":"invalid_request","error_description":"GET not permitted"}`.
+- [Pg And E Subscriptions Api Overlay](https://apis.io/overlays/pge/pg-and-e-subscriptions-api-overlay/)
+- [Pg And E Usage Api Overlay](https://apis.io/overlays/pge/pg-and-e-usage-api-overlay/)
+- [Pge Green Button Alliance Espi Overlay](https://apis.io/overlays/pge/pge-green-button-alliance-espi-overlay/)
 
-- **Human URL:** [https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html](https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html)
-- **Base URL:** `https://api.pge.com/datacustodian/oauth/v2`
+#### Security (4)
 
-#### Tags
+Authentication, trust centre, and vulnerability disclosure.
 
-- OAuth
-- Authorization
-- Green Button
-- ESPI
-- Security
+- [Pg And E Authentication](https://apis.io/security/pge/pg-and-e-authentication/)
+- [Pge Authentication](https://apis.io/security/pge/pge-authentication/)
+- [Pge Domain Security](https://apis.io/security/pge/pge-domain-security/)
+- [Pge Vulnerability Disclosure](https://apis.io/security/pge/pge-vulnerability-disclosure/)
 
-#### Properties
+#### OAuth scopes (2)
 
-- [Documentation — OAuth Authorization ESPI (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/OAuth_Authorization_ESPI.pdf)
-- [Documentation — Supported Function Block Scope String Mapping (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-Function-Block-Scope-String-Mapping-Click-Thru-2.0.pdf)
-- [API Reference — Supported APIs (PDF)](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf)
-- [Documentation — Third-party companies / developer resources](https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html)
-- [Registration](https://sharemydata.pge.com/)
-- [Reference — NAESB ESPI](http://naesb.org/espi)
+The permissions the API asks for.
 
-## Common Properties
+- [Pg And E Scopes](https://apis.io/scopes/pge/pg-and-e-scopes/)
+- [Pge Scopes](https://apis.io/scopes/pge/pge-scopes/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Pge Rate Limits](https://apis.io/rate-limits/pge/pge-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://www.pge.com/)
 - [Documentation](https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html)
-- [Registration](https://sharemydata.pge.com/)
-- [GitHub Organization](https://github.com/pgetech)
-- [LinkedIn](https://www.linkedin.com/company/pacificgasandelectric)
+- [Getting started](https://www.pge.com/en/save-energy-and-money/energy-saving-programs/smartmeter/third-party-companies.html#getstarted)
+- [API reference](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/Supported-APIs.pdf)
+- [Sign up](https://sharemydata.pge.com/)
 - [Blog](https://www.pge.com/en/newsroom/currents.html)
-- [Vulnerability Disclosure](https://www.pge.com/en/about/company-information/vulnerability-disclosure-policy.html)
-- [Privacy](https://www.pge.com/en/privacy-center.html)
-- [About](https://www.pge.com/en/about/company-information/company-profile.html)
-- [Reference — Energy Data Request Program](https://pge-energydatarequest.com/)
-- [Reference — Green Button](https://www.greenbuttondata.org/)
+- [Security](https://www.pge.com/en/about/company-information/vulnerability-disclosure-policy.html)
+- [Terms of service](https://www.pge.com/assets/pge/docs/save-energy-and-money/energy-savings-programs/ShareMyData_Platform_TermsofUse.pdf)
+- [Privacy policy](https://www.pge.com/en/privacy-center.html)
+- [GitHub](https://github.com/pgetech)
 
-## Notes
+## API Evangelist rating
 
-- `https://www.pge.com/developers` is a **trap**: it redirects to a Building and Renovation page for property developers, not software developers. The real developer surface is the third-party-companies page linked above.
-- PG&E publishes **no first-party OpenAPI, Swagger, Postman collection, GraphQL schema or AsyncAPI**. Its machine-readable contract is XSD; its API reference is PDF. The single file in `openapi/` is the Green Button Alliance's description of the standard, harvested verbatim and labelled as such in its own `info` block.
-- Rate limits are published: one request per second per vendor across all client IDs; 2,000 calls per hour per client ID; 20,000 calls per 24 hours per client ID, resetting at 5 p.m. Pacific Time.
-- Full probe log, control probes, mandate analysis and the consumer-versus-market split are in [`review.yml`](review.yml).
+**Kin Score 55.5** — strong · rubric 0.25.0 · scored 2026-10-23
 
-## Maintainers
+| Facet | Score |
+|---|---|
+| Discoverability | 71.4 |
+| Contract quality | 33.7 |
+| Contract governance | 18.2 |
+| Operational transparency | 68.4 |
+| Developer ergonomics | 82.7 |
+| Access clarity | 34.2 |
 
-- Kin Lane — kin@apievangelist.com
+**Agent readiness 38.6** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | na |
+| MCP Server | — |
+| Auth Clarity | negotiable (partial credit) |
+| Idempotency | na |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | documented (partial credit) |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | na |
+| Delegated Identity | documented (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 50.0** — Energy & Utilities
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/pge/](https://apis.io/providers/pge/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Pacific Gas and Electric: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/pge/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
